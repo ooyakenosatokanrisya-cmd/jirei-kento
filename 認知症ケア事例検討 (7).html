@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>認知症ケア事例検討｜おおやけの里</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+:root{
+  /* ラウンドチェックシートと共通のデザイン */
+  --green:#3D5A4E; --green-dark:#2E4A3F; --green-pale:#E8F0ED; --green-mid:#5F7D6F;
+  --paper:#F5F3EF; --card:#FFFFFF; --surface2:#FAF9F7; --ink:#2A2520; --ink-soft:#7A7068;
+  --accent2:#8B6F47;
+  --amber:#B07D2B; --amber-pale:#FDF3E0; --red:#B83232; --red-pale:#FDEAEA;
+  --line:#EDE9E3; --border:#D9D4CC; --radius:10px;
+  --shadow:0 2px 12px rgba(42,37,32,0.08); --shadow-lg:0 8px 32px rgba(42,37,32,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans JP',"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.75}
+header{background:var(--green);color:#fff;padding:14px 16px 10px;position:sticky;top:0;z-index:20;box-shadow:0 2px 16px rgba(0,0,0,0.15)}
+.htop{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:860px;margin:0 auto}
+header h1{font-family:'Noto Serif JP',serif;font-size:18px;font-weight:700;letter-spacing:.05em}
+header .sub{font-size:11px;opacity:.75;margin-top:2px;letter-spacing:.03em}
+.timer{display:flex;align-items:center;gap:8px}
+.timer .total{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.03em}
+.timer .total.over{color:#FFB4A0}
+.timer button{border:none;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.18);color:#fff;font-family:inherit}
+.stepperwrap{max-width:860px;margin:8px auto 0}
+.stepper{display:flex;gap:2px;padding:2px 0 0}
+.stepper .st{flex:1;text-align:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.6);padding:9px 2px;border-bottom:3px solid transparent;background:transparent;cursor:pointer;line-height:1.35;transition:all .2s;letter-spacing:.03em}
+.stepper .st.on{color:#fff;border-bottom-color:#fff;background:rgba(255,255,255,.08)}
+.stepper .st.done{color:rgba(255,255,255,.85);border-bottom-color:rgba(255,255,255,.35)}
+main{max-width:860px;margin:0 auto;padding:16px 14px 120px}
+.phase{display:none}
+.phase.on{display:block}
+.ph-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.ph-head h2{font-family:'Noto Serif JP',serif;font-size:18px;color:var(--green-dark);padding-left:12px;border-left:4px solid var(--accent2);line-height:1.45}
+.ph-head .ptime{font-size:13px;font-weight:700;color:#fff;background:var(--green-mid);border-radius:999px;padding:4px 14px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ph-head .ptime.over{background:var(--red)}
+.script b{color:#FFD9A0}
+.todo{background:var(--surface2);border-left:3px solid var(--accent2);border-radius:0 var(--radius) var(--radius) 0;padding:11px 14px;font-size:13.5px;margin-bottom:12px}
+.todo b{color:var(--green-dark)}
+.ng{color:var(--red);font-size:12.5px;margin-top:4px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+label.fld{display:block;font-size:12.5px;color:var(--green-dark);font-weight:700;margin:12px 0 4px}
+input[type=text],input[type=date],textarea,select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:15px;font-family:'Noto Sans JP',sans-serif;background:#fff;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--green)}
+textarea{min-height:70px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{border:1.5px solid var(--border);background:#fff;border-radius:999px;padding:7px 14px;font-size:13.5px;cursor:pointer;user-select:none;transition:all .2s}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.floors{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.floors button{border:1.5px solid var(--border);background:#fff;border-radius:8px;padding:12px 4px;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;font-family:'Noto Sans JP',sans-serif;line-height:1.35;transition:all .2s}
+.floors button.on{background:var(--green);border-color:var(--green);color:#fff}
+body.bigmode .floors button{font-size:17px;padding:15px 5px}
+@media(max-width:600px){.floors{grid-template-columns:repeat(3,1fr)}}
+.catbtns{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.catbtns button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 6px;font-size:12.5px;font-weight:700;color:var(--ink);cursor:pointer;line-height:1.4;font-family:inherit}
+.catbtns button.on{background:var(--green-pale);border-color:var(--green);color:var(--green-dark)}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-bottom:1px dashed var(--line);font-size:14.5px;cursor:pointer;border-radius:6px}
+.chk:hover{background:#F5F9F6}
+.chk:last-child{border-bottom:none}
+.chk input{margin-top:5px;width:19px;height:19px;flex:none;accent-color:var(--green)}
+.alert{background:var(--red-pale);border:1px solid var(--red);border-radius:var(--radius);padding:12px 14px;font-size:13.5px;color:var(--red);font-weight:700;display:none;margin:8px 0}
+.banner{background:var(--amber-pale);border:1px solid var(--amber);border-radius:var(--radius);padding:10px 13px;font-size:13px;margin:8px 0;display:none}
+.factor{border:1px solid var(--line);border-radius:var(--radius);background:#fff;margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow)}
+.factor .fhead{display:flex;align-items:center;gap:9px;padding:11px 12px;cursor:pointer}
+.factor .fnum{flex:none;width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.factor .ftitle{font-weight:700;font-size:14.5px;flex:1}
+.factor .fcount{font-size:11.5px;color:#fff;background:var(--amber);border-radius:999px;padding:2px 8px;display:none}
+.factor .caret{color:var(--ink-soft);font-size:12px;transition:transform .15s}
+.factor.open .caret{transform:rotate(90deg)}
+.fbody{display:none;border-top:1px solid var(--line);padding:6px 12px 12px}
+.factor.open .fbody{display:block}
+.fscript{background:var(--green-pale);border-radius:7px;padding:8px 11px;font-size:13px;color:var(--green-dark);margin:8px 0 4px}
+.resp{background:var(--green-pale);border-radius:8px;padding:10px 12px;margin-top:10px;display:none}
+.resp h4{font-size:12.5px;color:var(--green-dark);margin-bottom:4px}
+.resp ul{padding-left:18px;font-size:13.5px}
+.resp li{margin:3px 0;cursor:pointer}
+.resp li.sel{font-weight:700;color:var(--green-dark)}
+.hint{font-size:12px;color:var(--ink-soft);margin-top:4px}
+.planrow{display:grid;grid-template-columns:1fr 2fr 1fr 32px;gap:6px;margin-bottom:6px}
+.planrow input{font-size:13.5px;padding:7px 8px}
+.planrow button{border:none;background:var(--red-pale);color:var(--red);border-radius:8px;cursor:pointer;font-size:15px}
+.btn{display:inline-block;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;letter-spacing:.04em;transition:all .2s}
+.btn:active{opacity:.75}
+.btn.pri{background:var(--green);color:#fff;box-shadow:0 4px 12px rgba(61,90,78,0.3)}
+.btn.sec2{background:var(--card);color:var(--green);border:2px solid var(--green)}
+.btn.ghost{background:var(--surface2);color:var(--ink);border:1px solid var(--border)}
+.btn.warn{background:var(--card);color:var(--red);border:2px solid var(--red)}
+footer.fixbar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);border-top:1px solid var(--border);padding:10px 14px;z-index:20;box-shadow:0 -2px 12px rgba(42,37,32,0.08)}
+.fixin{max-width:860px;margin:0 auto;display:flex;gap:8px;justify-content:space-between;align-items:center}
+.gatehint{font-size:11.5px;color:var(--red);flex:1}
+details.acc{border:1px solid var(--line);border-radius:var(--radius);background:#fff;margin-bottom:8px;box-shadow:var(--shadow)}
+details.acc summary{padding:11px 13px;font-weight:700;font-size:14px;cursor:pointer;color:var(--green-dark);list-style:none;display:flex;justify-content:space-between}
+details.acc summary::after{content:"＋";color:var(--ink-soft)}
+details.acc[open] summary::after{content:"−"}
+details.acc .accbody{padding:0 13px 13px;font-size:13.5px}
+.minutes{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:13.5px;white-space:pre-wrap;line-height:1.8;max-height:420px;overflow:auto}
+.rec{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:8px;box-shadow:var(--shadow)}
+.rec .rtop{display:flex;justify-content:space-between;gap:8px}
+.rec .racts{display:flex;gap:6px;margin-top:8px}
+.rec .racts button{font-size:12px;padding:6px 12px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;font-family:inherit}
+.tag{display:inline-block;background:var(--green-pale);color:var(--green-dark);font-size:11px;border-radius:5px;padding:1px 7px;margin:2px 4px 0 0}
+.empty{text-align:center;color:var(--ink-soft);font-size:13.5px;padding:30px 0}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.planrow{grid-template-columns:1fr 1fr}.planrow input:nth-child(2){grid-column:1/3}.stepper .st{font-size:9px}}
+@media(max-width:600px){
+  .htop{flex-direction:column;align-items:flex-start;gap:6px}
+  .timer{width:100%;justify-content:space-between}
+  .fixin{flex-wrap:wrap;gap:6px}
+  .fixin .btn{flex:1;text-align:center;padding:10px 8px;font-size:14px}
+}
+
+
+/* ===== モニター表示モード（投影用） ===== */
+body.bigmode{font-size:20px;line-height:1.85}
+body.bigmode main{max-width:1360px;padding:24px 28px 130px}
+body.bigmode header .htop,body.bigmode .stepperwrap{max-width:1360px}
+body.bigmode header h1{font-size:23px}
+body.bigmode header .sub{font-size:14px}
+body.bigmode .timer .total{font-size:34px}
+body.bigmode .timer button,body.bigmode #bigbtn{font-size:15px;padding:8px 16px}
+body.bigmode .stepper .st{font-size:14px;padding:9px 3px}
+body.bigmode .ph-head h2{font-size:27px;border-left-width:7px;padding-left:15px}
+body.bigmode .ph-head .ptime{font-size:18px;padding:6px 20px}
+body.bigmode .todo{font-size:17px;padding:14px 18px}
+body.bigmode .ng{font-size:15.5px}
+body.bigmode .card{padding:22px}
+body.bigmode label.fld{font-size:16px}
+body.bigmode input[type=text],body.bigmode input[type=date],body.bigmode textarea,body.bigmode select{font-size:20px;padding:13px 15px}
+body.bigmode textarea{min-height:96px}
+body.bigmode .chip{font-size:17px;padding:10px 20px}
+body.bigmode .catbtns button{font-size:16px;padding:12px 8px}
+body.bigmode .chk{font-size:19px;padding:12px 6px;gap:13px}
+body.bigmode .chk input{width:24px;height:24px;margin-top:7px}
+body.bigmode .alert{font-size:17.5px;padding:16px 18px}
+body.bigmode .banner{font-size:16.5px;padding:13px 16px}
+body.bigmode .hint{font-size:15px}
+body.bigmode .factor .fnum{width:38px;height:38px;font-size:18px}
+body.bigmode .factor .ftitle{font-size:19px}
+body.bigmode .factor .fcount{font-size:14px;padding:3px 11px}
+body.bigmode .fscript{font-size:17.5px;padding:11px 14px}
+body.bigmode .resp h4{font-size:16px}
+body.bigmode .resp ul{font-size:17.5px}
+body.bigmode .planrow input{font-size:17.5px;padding:11px 12px}
+body.bigmode .btn{font-size:18px;padding:15px 26px}
+body.bigmode .learnbtn{font-size:16px;padding:9px 19px}
+body.bigmode .minutes{font-size:17px;max-height:560px}
+body.bigmode .gatehint{font-size:14.5px}
+body.bigmode .lsec h3{font-size:22px}
+body.bigmode .lsec h4{font-size:17.5px}
+body.bigmode .lsec p{font-size:17.5px}
+body.bigmode .lbox{font-size:15.5px}
+body.bigmode .lbox b{font-size:16px}
+body.bigmode .ltable{font-size:16px}
+body.bigmode .lnote{font-size:16.5px}
+
+/* ===== 学習ビュー ===== */
+body.learnmode header .stepperwrap,body.learnmode main>.phase,body.learnmode footer.fixbar,body.learnmode #wsview,body.learnmode #recview{display:none!important}
+body.learnmode #learnview{display:block!important}
+body.recmode header .stepperwrap,body.recmode main>.phase,body.recmode footer.fixbar,body.recmode #wsview,body.recmode #learnview{display:none!important}
+body.recmode #recview{display:block!important}
+.learnnav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;position:sticky;top:64px;background:var(--paper);padding:8px 0;z-index:5}
+.learnnav .chip{font-size:12.5px}
+.lsec{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow);scroll-margin-top:130px}
+.lsec h3{font-family:'Noto Serif JP',serif;font-size:16px;color:var(--green-dark);padding-left:10px;border-left:4px solid var(--accent2);margin-bottom:10px}
+.lsec h4{font-size:13.5px;color:var(--green-dark);margin:14px 0 6px}
+.lsec p{font-size:14px;margin-bottom:8px}
+.lrow{display:flex;align-items:stretch;gap:0;margin:10px 0;flex-wrap:wrap}
+.lbox{flex:1;min-width:90px;border:1.5px solid var(--green);background:var(--green-pale);border-radius:10px;padding:8px 9px;font-size:12px;line-height:1.6;text-align:center}
+.lbox b{display:block;font-size:12.5px;color:var(--green-dark)}
+.lbox.red{border-color:var(--red);background:var(--red-pale)}
+.lbox.red b{color:var(--red)}
+.lbox.amber{border-color:var(--amber);background:var(--amber-pale)}
+.lbox.amber b{color:var(--amber)}
+.lbox.gray{border-color:#9AA6A0;background:#F0F2F0}
+.lbox.gray b{color:#5C6B63}
+.lbox.dark{border-color:var(--green-dark);background:var(--green);color:#fff}
+.lbox.dark b{color:#fff}
+.larrow{flex:0 0 auto;display:flex;align-items:center;padding:0 5px;color:var(--green);font-weight:700;font-size:15px}
+.lgrid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.lgrid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.ltable{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}
+.ltable th,.ltable td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.ltable th{background:var(--green-pale);color:var(--green-dark);white-space:nowrap}
+.ltable .warn{color:var(--red);font-weight:700}
+.lnote{background:var(--amber-pale);border-left:4px solid var(--amber);border-radius:0 8px 8px 0;padding:8px 12px;font-size:13px;margin:10px 0}
+.lnote.red{background:var(--red-pale);border-color:var(--red);color:var(--red);font-weight:700}
+.learnbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--accent2);background:#fff;color:var(--accent2);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;margin:0 6px 12px 0}
+@media(max-width:600px){.lgrid4{grid-template-columns:1fr 1fr}}
+@media print{#learnview{display:none!important}}
+
+/* ===== ワークシート ===== */
+.wsheet{background:#fff;border:1.5px solid #333;padding:12px;font-size:11.5px;line-height:1.5;color:#111}
+.wsheet h3{font-family:'Noto Serif JP',serif;font-size:14px;text-align:center;letter-spacing:.1em;margin-bottom:6px}
+.wsheet table{width:100%;border-collapse:collapse;margin-bottom:6px}
+.wsheet th,.wsheet td{border:1px solid #333;padding:4px 6px;vertical-align:top;font-weight:normal;text-align:left}
+.wsheet th{background:#EFEFEA;white-space:nowrap;font-weight:700}
+.wsheet .sec{background:#DCE8E1;font-weight:700;padding:3px 6px;border:1px solid #333;border-bottom:none;font-size:12px}
+.wsheet .cklist{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;font-size:11px}
+.wsheet .ck{padding:1px 0}
+.wsheet .ck b{font-weight:700}
+body.wsmode header,body.wsmode main>.phase,body.wsmode footer.fixbar{display:none!important}
+body.wsmode #wsview{display:block!important}
+@media print{
+  header,footer.fixbar,.noprint,.phase{display:none!important}
+  body.wsmode{background:#fff}
+  body.wsmode main{padding:0;max-width:100%}
+  .wsheet{border:none;padding:0}
+  @page{size:A4;margin:12mm}
+}
+@media print{
+  body.wsmode main{padding:0;max-width:100%;background:#fff}
+  .wsheet{border:none;padding:0;font-size:10.5px}
+  .wsheet table{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="htop">
+    <div>
+      <h1>認知症ケア事例検討</h1>
+      <div class="sub">介護老人保健施設おおやけの里　<span id="syncstat" style="background:rgba(255,255,255,.18);border-radius:999px;padding:1px 9px;font-size:10px">ローカル保存</span></div>
+    </div>
+    <div class="timer">
+      <button id="bigbtn" onclick="toggleBig()" style="border:none;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.22);color:#fff;font-family:inherit">モニター</button>
+      <button onclick="openRec()" style="border:none;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.22);color:#fff;font-family:inherit">記録</button>
+      <button onclick="openLearn('l-gensoku')" style="border:none;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.22);color:#fff;font-family:inherit">学ぶ</button>
+      <button onclick="loadDemo()" style="border:none;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;background:var(--amber);color:#fff;font-family:inherit">デモ</button>
+      <span class="total" id="totaltime">30:00</span>
+      <button id="timerbtn" onclick="toggleTimer()">開始</button>
+    </div>
+  </div>
+  <div class="stepperwrap"><div class="stepper" id="stepper"></div></div>
+</header>
+
+<main>
+
+<!-- ============ P0 準備 ============ -->
+<div class="phase on" data-ph="0">
+  <div class="ph-head"><h2>0．準備・開会</h2><span class="ptime" data-pt="0">目安 2分</span></div>
+  <div class="banner" style="background:var(--amber-pale);border-color:var(--amber);font-size:13px"><b>進行の台本は別冊です。</b>「事例検討　進行台本マニュアル」（印刷して手元に置くか、別の端末で開いてください）を見ながら進めます。</div>
+  <div class="todo"><b>認知症実践指導者のやること：</b>基本情報を入力し、上部の「開始」でタイマーをスタートする。参加者に検討事例を一言で共有する。</div>
+  <button class="learnbtn" onclick="openLearn('l-gensoku')">📖 3つの原則と新しい認知症観</button>
+  <div class="card">
+    <div class="grid2">
+      <div><label class="fld">開催日</label><input type="date" id="f-date"></div>
+      <div style="grid-column:1/-1"><label class="fld">フロア（タップで選択）</label>
+        <div class="floors" id="floorbtns"></div>
+        <input type="hidden" id="f-floor"></div>
+      <div><label class="fld">利用者（イニシャル等）</label><input type="text" id="f-user" placeholder="例：A様" list="userlist" onchange="findPrev()" onblur="findPrev()"><datalist id="userlist"></datalist></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><label class="fld">年齢</label><input type="text" id="f-age" placeholder="例：80" inputmode="numeric"></div>
+        <div><label class="fld">性別</label><select id="f-sex"><option value=""></option><option>男性</option><option>女性</option></select></div>
+      </div>
+      <div><label class="fld">認知症実践指導者（進行）</label><input type="text" id="f-facilitator" placeholder="氏名"></div>
+      <div><label class="fld">参加者（カンマ区切り）</label><input type="text" id="f-members" placeholder="例：安井、川上、春名"></div>
+    </div>
+    <div id="prevbox" style="display:none">
+      <label class="fld" style="color:var(--amber)">前回の検討のふり返り（この方の記録がある場合）</label>
+      <div class="banner" id="previnfo" style="background:var(--amber-pale);border-color:var(--amber);font-size:13px"></div>
+      <label class="fld">前回決めたことは実行できましたか</label>
+      <div class="chips" id="prevstatus"></div>
+      <label class="fld">ふり返りのメモ（何が起きたか・何が邪魔になったか）</label>
+      <textarea id="f-prevmemo" placeholder="例：役割づくりは続けられ、玄関に来る回数が週3回に減った。お茶の変更は担当が不在の日にできなかった。"></textarea>
+    </div>
+    <label class="fld">検討する症状（4分類から選択）</label>
+    <div class="catbtns" id="catbtns"></div>
+    <div class="chips" id="symchips"></div>
+    <div class="banner" id="symhint"><b>ガイド：</b>選択した行動の背後に、隠れた心理症状（不安・恐怖・孤独・夜間不眠など）はありませんか？「精神症状」のカテゴリもあわせて確認してください。</div>
+  </div>
+</div>
+
+<!-- ============ P1 事実の共有 ============ -->
+<div class="phase" data-ph="1">
+  <div class="ph-head"><h2>1．事実を集める</h2><span class="ptime" data-pt="1">目安 5分</span></div>
+  <div class="todo"><b>認知症実践指導者のやること：</b>報告を聞きながら下欄に記録する（記録係を指名してもよい）。「たとえば昨日はどうでしたか？」と具体化の質問で助ける。<div class="ng">NG：この段階で原因や対応の話を始めない。「〜な性格だから」という人格の話にしない。</div></div>
+  <button class="learnbtn" onclick="openLearn('l-bpsd')">📖 BPSDの構造と4分類</button>
+  <div class="card">
+    <label class="fld">具体的な様子（いつ・どこで・誰と・何の場面で起こるか）</label>
+    <textarea id="f-fact1" placeholder="例：夕方16時ごろ、フロアの玄関付近で「帰ります」と言う。声かけした職員にはっきり理由を話す。"></textarea>
+    <label class="fld">起こらないのはどんなとき（差の情報＝最大の手がかり）</label>
+    <textarea id="f-fact2" placeholder="例：日中の入浴後や、娘様の面会日の夕方には言わない。夜間はぐっすり休んでいる。"></textarea>
+    <label class="fld">頻度・期間・いつから始まったか</label>
+    <textarea id="f-fact3" placeholder="例：2週間前の居室移動のあとから、ほぼ毎日。"></textarea>
+    <label class="fld">ふだんの状態（食事量・睡眠・排便・血圧などの、いつもの値）</label>
+    <textarea id="f-fact4" placeholder="例：食事は主食8割、排便は2日に1回、血圧はいつも130台。"></textarea>
+  </div>
+  <div class="card">
+    <label class="fld" style="color:var(--green-dark);font-size:13px">ワークシート「1 その人らしい暮らしの把握」</label>
+    <div class="grid2">
+      <div style="grid-column:1/-1;display:grid;grid-template-columns:80px 1fr;gap:8px">
+        <div><label class="fld">チェックリストNo.</label><input type="text" id="ws-no" placeholder="例：5"></div>
+        <div><label class="fld">ニーズを表すような本人の声（チェックリストを用いたインタビュー）</label><input type="text" id="ws-voice" placeholder="例：こうちゃんです。すみません"></div>
+      </div>
+    </div>
+    <label class="fld">本人のニーズが表れているような普段の言動や行動</label>
+    <textarea id="ws-behavior" placeholder="例：よく「こうちゃんは？」「なおちゃんは？」と尋ねられる"></textarea>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div><label class="fld">BPSD25Q 重症度合計点（初回評価：0〜125）</label><input type="text" id="ws-q25a" inputmode="numeric" placeholder="例：25"></div>
+      <div><label class="fld">同（取組後評価：振り返り時に記入）</label><input type="text" id="ws-q25b" inputmode="numeric" placeholder="空欄可"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ P2 関門①せん妄・身体 ============ -->
+<div class="phase" data-ph="2">
+  <div class="ph-head"><h2>2．チェック①　からだを先に確認</h2><span class="ptime" data-pt="2">目安 3分</span></div>
+  <button class="learnbtn" onclick="openLearn('l-body')">📖 身体アセスメント3ステップとバイタル目安</button>
+  <div class="card">
+    <label class="fld" style="color:var(--red)">せん妄チェック（からだ・薬が原因ではないかの確認）</label>
+    <div id="deliriumchecks"></div>
+    <div class="alert" id="delalert">【警告】せん妄（からだの病気や薬が原因の混乱）の可能性があります。この会で考えるより先に、看護師・医師へすぐに報告し、脱水・感染症・薬の影響の確認と治療を優先してください。<div style="margin-top:8px"><button class="btn warn" style="padding:8px 14px;font-size:13px" onclick="closeAsDelirium()">医療連携として記録し、この検討を終了する</button></div><div class="hint" style="color:var(--red);font-weight:400">※すでに医療報告済みで、BPSDの併存を検討する場合のみ先へ進めます。</div></div>
+    <label class="fld">からだのチェック</label>
+    <div id="bodychecks"></div>
+    <div class="alert" id="medalert">⚠ からだのサインに当てはまりがあります。計画に「看護師・医師への報告」を必ず入れてください。</div>
+    <details class="acc" style="margin-top:10px">
+      <summary>血圧・脈拍などの目安（ふだんの値との比べ方）</summary>
+      <div class="accbody">血圧：いつもより30〜40mmHg以上の変動は重大疾患の可能性。脈拍：60〜100回/分、±20〜30回/分以上は要注意。呼吸数：15〜20回/分。体温：腋窩37℃以上発熱・34℃以下低体温。水分：体重の約半分が水分、1〜2％の喪失が続くと意識障害が起こりうる。5種類以上の内服薬は転倒・副作用リスク増。</div>
+    </details>
+  </div>
+</div>
+
+<!-- ============ P3 背景分析 ============ -->
+<div class="phase" data-ph="3">
+  <div class="ph-head"><h2>3．「なぜ？」を8つの窓で考える</h2><span class="ptime" data-pt="3">目安 10分</span></div>
+  <div class="todo"><b>認知症実践指導者のやること：</b>窓を上から順にタップして開き、枠内の問いをそのまま読み上げる。当てはまりにチェックすると「対応のヒント」が出るので、よさそうなものをタップして選んでおく。<div class="ng">NG：発言の多い人だけで進めない。「○○さんはどう思いますか」と全員に振る。</div></div>
+  <button class="learnbtn" onclick="openLearn('l-himotoki')">📖 ひもとき：理解の3段階と8要因</button>
+  <div id="factors"></div>
+  <div class="card">
+    <label class="fld" style="color:var(--green-dark);font-size:13px">ワークシート「2 BPSDと背景要因の分析」——検討すべき項目に ☑（8因子の議論を公式様式の分類に転記）</label>
+    <div id="wschecks"></div>
+    <label class="fld">その他・カッコ内の具体的記述（任意）</label>
+    <input type="text" id="ws-other" placeholder="例：夕方疲れている様子がある">
+    <label class="fld">BPSDが出現しやすい場面</label>
+    <textarea id="ws-scene" placeholder="例：改めて考えると、午後が多い。おやつ以降から夕食までが多い"></textarea>
+  </div>
+</div>
+
+<!-- ============ P4 関門②共感的理解 ============ -->
+<div class="phase" data-ph="4">
+  <div class="ph-head"><h2>4．チェック②　本人の気持ちを言葉に</h2><span class="ptime" data-pt="4">目安 3分</span></div>
+  <div class="todo"><b>認知症実践指導者のやること：</b>出てきた言葉をつなぎ、「私は〜」の文章に整えて入力する。全員に「この気持ちの言葉に違和感はないですか」と確認してから次へ。<div class="ng">NG：「問題行動」「困った行動」という言葉を使わない。使った人がいたら本人視点に言い換えてもらう。</div></div>
+  <button class="learnbtn" onclick="openLearn('l-sos')">📖 本人視点（SOS）とコミュニケーション</button>
+  <div class="card">
+    <label class="fld">本人の心の声（SOS）※必ず「私は〜」の形で</label>
+    <textarea id="f-sos" placeholder="記入例：（私は）なぜここにいるのか分からず不安なのに、知らない人に急に服を脱がされそうになって、怖くて仕方がなかったから手が出てしまった。"></textarea>
+    <div class="hint">この一文が、やることすべての出発点になります。職員側から見た言葉になっていないか確認してください。</div>
+    <label class="fld">着目したBPSDの背景要因（ワークシート用の要約）</label>
+    <textarea id="ws-haikei" placeholder="例：周りの人の言うことが良く分からず、普段の生活で疎外感を感じている。加えて午後の疲労も加わり、夫や息子が気になり、探して歩き始めるのではないか。まずは、午後の疲労に焦点を当ててはどうか。"></textarea>
+    <button class="btn ghost" style="padding:7px 14px;font-size:13px" onclick="autoHaikei()">分析結果から下書きを自動作成</button>
+  </div>
+</div>
+
+<!-- ============ P5 対応計画 ============ -->
+<div class="phase" data-ph="5">
+  <div class="ph-head"><h2>5．チェック③　やることを決める</h2><span class="ptime" data-pt="5">目安 5分</span></div>
+  <button class="learnbtn" onclick="openLearn('l-triage')">📖 仕分けとアプローチ早見</button><button class="learnbtn" onclick="openLearn('l-env')">📖 環境づくり・食事のケア</button>
+  <div class="card">
+    <label class="fld">この行動は、どちらのタイプ？（両方でもOK・必須）</label>
+    <label class="chk"><input type="checkbox" id="tri-brain"><span>脳の病気そのものによる部分がある（例：覚えていられない、時間や場所が分からなくなる）</span></label>
+    <div class="banner" id="tri-brain-guide" style="background:var(--red-pale);border-color:var(--red)"><b>ヒント：</b>ここは本人の努力や訓練では変えられません。説得・訂正・練習の計画は立てず、「環境を整える」「私たちの関わり方・受け止め方を変える（訂正せず受け止める・安心できる環境をつくる）」対応を選びます。</div>
+    <label class="chk"><input type="checkbox" id="tri-inter"><span>からだ・気持ち・環境がからんで起きている部分がある（例：不安からの介護抵抗、居心地の悪さからの帰宅要求）</span></label>
+    <div class="banner" id="tri-inter-guide"><b>ヒント：</b>ここは工夫で変えられます。8つの窓で選んだ「対応のヒント」から、不安をやわらげる・不快のもとを取り除くなどの具体策を計画にします。</div>
+    <label class="fld">8つの窓で選んだ「対応のヒント」</label>
+    <div id="pickedResp" class="hint" style="min-height:20px">（まだ選択されていません。フェーズ3に戻って選べます）</div>
+    <label class="fld">やること（だれが・何を・いつまでに）※1件以上必須</label>
+    <div id="planrows"></div>
+    <button class="btn ghost" style="padding:7px 14px;font-size:13px" onclick="addPlanRow()">＋ 行を追加</button>
+    <label class="fld">振り返り予定日（翌月の事例検討＝次の評価時期）</label>
+    <input type="date" id="f-review">
+  </div>
+  <div class="card">
+    <label class="fld" style="color:var(--green-dark);font-size:13px">ワークシート「3 その人らしい暮らしの実現プラン」</label>
+    <label class="fld">具体的なケア計画（1つに絞る）</label>
+    <textarea id="ws-plan1" placeholder="例：おやつの前の30分間程度、居室で横になり、休むように声をかける。"></textarea>
+    <button class="btn ghost" style="padding:7px 14px;font-size:13px" onclick="copyPlan1()">実行計画の1行目を転記</button>
+    <div style="display:grid;grid-template-columns:110px 1fr;gap:8px;margin-top:6px">
+      <div><label class="fld">週間後</label><input type="text" id="ws-weeks" inputmode="numeric" placeholder="例：4"></div>
+      <div><label class="fld">目指す本人の姿（1と2から考える）</label><input type="text" id="ws-goal" placeholder="例：夕方になっても疲労を感じず、落ち着いていられる"></div>
+    </div>
+    <label class="fld">ケア計画実施に関連して本人ができること</label>
+    <textarea id="ws-can" placeholder="例：15時からおやつであることはわかる、時計を見て時間がわかる。"></textarea>
+    <label class="fld">ケア計画実施に関連して本人ができないこと</label>
+    <textarea id="ws-cannot" placeholder="例：時計がいつもの場所にないと、時計が見つけられず、時間が分からなくなる時がある。"></textarea>
+  </div>
+</div>
+
+<!-- ============ P6 まとめ ============ -->
+<div class="phase" data-ph="6">
+  <div class="ph-head"><h2>6．決めたことの確認・閉会</h2><span class="ptime" data-pt="6">目安 2分</span></div>
+  <div class="todo"><b>認知症実践指導者のやること：</b>議事録を確認して「保存」。「議事録をコピー」で申し送りやノートに貼り付けて共有する。</div>
+  <div class="minutes" id="minutes"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+    <button class="btn pri" onclick="saveRecord(false)">保存して終了</button>
+    <button class="btn sec2" onclick="copyMinutes()">議事録をコピー</button>
+    <button class="btn sec2" onclick="showWS()">ワークシート表示・印刷</button>
+    <button class="btn ghost" onclick="openRec()">過去の検討記録・CSV</button>
+  </div>
+  <div id="reclist" style="margin-top:14px"></div>
+</div>
+
+<!-- ============ ワークシートビュー ============ -->
+<div id="wsview" style="display:none">
+  <div class="noprint" style="display:flex;gap:8px;margin-bottom:10px">
+    <button class="btn ghost" onclick="hideWS()">← 検討画面に戻る</button>
+    <button class="btn pri" onclick="window.print()">このワークシートを印刷</button>
+  </div>
+  <div id="wsdoc"></div>
+</div>
+
+<!-- ============ 記録ビュー ============ -->
+<div id="recview" style="display:none">
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <button class="btn ghost" onclick="hideRec()">← 検討画面に戻る</button>
+  </div>
+  <h2 class="sec" style="margin-top:0">検討の記録</h2>
+  <div id="reclist2"></div>
+</div>
+
+<!-- ============ 学習ビュー ============ -->
+<div id="learnview" style="display:none">
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <button class="btn ghost" onclick="hideLearn()">← 検討画面に戻る</button>
+  </div>
+  <div class="learnnav">
+    <span class="chip" onclick="jumpLearn('l-gensoku')">3つの原則</span>
+    <span class="chip" onclick="jumpLearn('l-bpsd')">BPSDの構造</span>
+    <span class="chip" onclick="jumpLearn('l-body')">身体3ステップ</span>
+    <span class="chip" onclick="jumpLearn('l-himotoki')">ひもとき8要因</span>
+    <span class="chip" onclick="jumpLearn('l-sos')">SOSと会話</span>
+    <span class="chip" onclick="jumpLearn('l-triage')">仕分け・アプローチ</span>
+    <span class="chip" onclick="jumpLearn('l-env')">環境・食事</span>
+  </div>
+
+  <div class="lsec" id="l-gensoku">
+    <h3>全体を貫く3つの原則</h3>
+    <div class="lrow">
+      <div class="lbox"><b>原則1</b>BPSDは本人の<br>SOS・サイン</div><div class="larrow">＋</div>
+      <div class="lbox amber"><b>原則2</b>まず身体を疑う<br>（痛み・便秘・薬・せん妄）</div><div class="larrow">＋</div>
+      <div class="lbox"><b>原則3</b>その人のもつ能力を<br>うばわない</div>
+    </div>
+    <p>2024年1月施行の認知症基本法により「新しい認知症観」に立つケアが求められています。暴言・暴力も、本人から見れば「なぜ私はこんな扱いを受けるのか」という感情の表出です。「問題行動」として抑えるのではなく、本人視点で背景を探ります。認知症の人は不調を言葉で正確に訴えられないため、急なBPSDの出現・悪化はまず身体疾患・せん妄・薬剤を疑います。そして、できないからと全部代行せず、できる部分を活かし、むずかしい部分だけをともに行います。</p>
+    <h4>この会の約束ごと（3つ）</h4>
+    <div class="lrow">
+      <div class="lbox"><b>約束1</b>印象ではなく<br>事実で話す</div>
+      <div class="larrow"></div>
+      <div class="lbox red"><b>約束2</b>急な変化は<br>からだが先（せん妄）</div>
+      <div class="larrow"></div>
+      <div class="lbox amber"><b>約束3</b>理由は本人の<br>「私は〜」の言葉で</div>
+    </div>
+  </div>
+
+  <div class="lsec" id="l-bpsd">
+    <h3>BPSDの構造と4分類</h3>
+    <div class="lrow">
+      <div class="lbox gray"><b>中核症状</b>記憶・見当識・遂行機能など<br>※全員に必ずあらわれる</div><div class="larrow">＋</div>
+      <div class="lbox"><b>背景因子</b>身体・心理・環境・かかわり</div><div class="larrow">▶</div>
+      <div class="lbox dark"><b>BPSD</b>※全員にみられる<br>わけではない</div>
+    </div>
+    <div class="lnote red">せん妄はBPSDに含まれない：せん妄は意識障害の一種。急激な意識・感情の変動をみたら、BPSDと決めつけず原因疾患の治療（医療連携）へ。</div>
+    <div class="lrow">
+      <div class="lbox red"><b>介入が困難な因子</b>遺伝的要因／神経生物学的要因（脳病変・神経伝達物質・概日リズム）<br>→ 医療と連携</div>
+      <div class="larrow"></div>
+      <div class="lbox"><b>介入が可能な因子</b>心理的要因（性格・ストレス反応）／社会的要因（環境・かかわり）<br>→ ケアの工夫＝介護の専門性</div>
+    </div>
+    <h4>症状の4分類（観察の共通言語）</h4>
+    <table class="ltable">
+      <tr><th>① 中核症状関連</th><td>同じ質問の繰り返し、時間の混乱・昼夜逆転、迷子・他室への侵入、鏡現象、作話、病識の欠如など</td></tr>
+      <tr><th>② 精神症状</th><td>幻視・幻聴、物盗られ妄想、夜間不眠、抑うつ・不安、自発性の低下、易怒・興奮など</td></tr>
+      <tr><th>③ 行動コントロールの障害</th><td>脱抑制、帰宅要求・無断離設、徘徊、過食・拒食・異食、夜間不穏、収集癖など</td></tr>
+      <tr><th>④ 対人関係の障害</th><td>依存、孤立、拒否（介護への抵抗・入浴拒否）、攻撃（暴言・暴力）</td></tr>
+    </table>
+    <div class="lnote">表面の行動（うろうろ等）の裏に心理症状（不安等）が隠れていることが多い。行動と心理をセットで特定する。</div>
+  </div>
+
+  <div class="lsec" id="l-body">
+    <h3>健康アセスメント3ステップとバイタル目安</h3>
+    <div class="lrow">
+      <div class="lbox amber"><b>STEP 1</b>話を聞く<br>静かな場所で低音・ゆっくり。<br>はい/いいえで聞く</div><div class="larrow">▶</div>
+      <div class="lbox amber"><b>STEP 2</b>いつもの様子と比較<br>表情・顔色・行動・バイタル<br>（ベースラインが前提）</div><div class="larrow">▶</div>
+      <div class="lbox amber"><b>STEP 3</b>やさしく触れて反応をみる<br>触れながら思いを聞き<br>仮説を立てる</div>
+    </div>
+    <table class="ltable">
+      <tr><th>血圧</th><td>基準140/90以上。<span class="warn">いつもより30〜40mmHg以上の変動は重大疾患の可能性→医療職へ</span></td></tr>
+      <tr><th>脈拍</th><td>60〜100回/分。<span class="warn">±20〜30回/分以上は心不全・発熱・脱水・薬物過剰などの可能性</span></td></tr>
+      <tr><th>呼吸数</th><td>15〜20回/分。気づかれないよう胸郭の動きで測る</td></tr>
+      <tr><th>体温</th><td>腋窩37℃以上＝発熱、34℃以下＝低体温。平熱の把握が前提</td></tr>
+      <tr><th>水分</th><td>体重の約半分が水分。1〜2％の喪失が続くと意識障害（ぼーっとする・眠る）</td></tr>
+      <tr><th>薬</th><td>5種類以上の内服は転倒・副作用リスク増。新規処方・薬剤性せん妄は看護師・薬剤師へ</td></tr>
+    </table>
+    <h4>言葉によらない痛みのサイン（米国老年医学会の指標より）</h4>
+    <p>眉をしかめる・悲しそうな表情／うめき・ため息・大声で呼ぶ／硬直した姿勢・そわそわ・速い歩調／攻撃的になる・ケアを拒否する／食事の拒否・徘徊の増加・叫び・混乱の増加。<b>「苦痛があるかもしれない」という視点で観察する。</b></p>
+  </div>
+
+  <div class="lsec" id="l-himotoki">
+    <h3>ひもとき：理解の3段階と分析の8要因</h3>
+    <div class="lrow">
+      <div class="lbox gray"><b>① 評価的理解</b>介護者視点で<br>「困った人」ととらえる</div><div class="larrow">▶</div>
+      <div class="lbox amber"><b>② 分析的理解</b>「なぜ？」と本人の<br>立場で8要因を分析</div><div class="larrow">▶</div>
+      <div class="lbox"><b>③ 共感的理解</b>「そうだったのか」と<br>意味がわかり共感</div>
+    </div>
+    <div class="lgrid4">
+      <div class="lbox"><b>①</b>病気・薬の影響</div>
+      <div class="lbox"><b>②</b>身体の不調</div>
+      <div class="lbox"><b>③</b>心理的背景</div>
+      <div class="lbox"><b>④</b>五感への刺激</div>
+      <div class="lbox"><b>⑤</b>かかわり方・態度</div>
+      <div class="lbox"><b>⑥</b>物的環境</div>
+      <div class="lbox"><b>⑦</b>活動とのズレ</div>
+      <div class="lbox"><b>⑧</b>生活歴とのズレ</div>
+    </div>
+    <div class="lnote red">推測した背景（アンメットニーズ）は仮説。必ず事実の確認（アセスメント）で裏づけてからケアプランへ。</div>
+    <p>「いつ起こり、いつ起こらないか」の差が背景を絞る最大の手がかりです。たとえば夕方だけの帰宅要求は、生活歴（夕食の支度の役割）や夕方の疲労・孤独と結びつくことが多く、⑧⑦③あたりから検討が進みます。</p>
+  </div>
+
+  <div class="lsec" id="l-sos">
+    <h3>本人視点（SOS）とコミュニケーション</h3>
+    <h4>一人称に翻訳する意味</h4>
+    <p>「帰宅要求が続いて困る」は介護者の文章です。「私は夕方になったら家族のご飯の支度をしなければいけないのに、帰らせてもらえなくて不安だ」と本人の一人称に翻訳した瞬間に、必要な対応（役割づくり・安心の声かけ）が見えてきます。これが評価的理解から共感的理解への転換です。</p>
+    <h4>コンタクトケア（かかわりの第一歩・10〜15秒）</h4>
+    <div class="lrow">
+      <div class="lbox"><b>①</b>正面近くで<br>目の高さを合わせる</div><div class="larrow">▶</div>
+      <div class="lbox"><b>②</b>ゆっくり会釈</div><div class="larrow">▶</div>
+      <div class="lbox"><b>③</b>名前を呼ぶ</div><div class="larrow">▶</div>
+      <div class="lbox"><b>④</b>了解を得る</div><div class="larrow">▶</div>
+      <div class="lbox"><b>⑤</b>介助する</div>
+    </div>
+    <div class="lnote">この10〜15秒を省いて急に触れると、怒りを鎮めるのに15〜20分かかることがある。居室のノックと同じ「当たり前の手順」。</div>
+    <h4>言葉の標準</h4>
+    <p>短い文章／1文に1つのメッセージ／指示語（それ・あの）を避け具体的に／生活歴に即した表現（トイレ→便所など）／視覚情報・非言語も使う。語りかけは、開かれた質問→閉じた質問→<b>返事を求めない語りかけ</b>（「さっぱりして気持ちいいですね」と語りかけ、表情の快を確認）へ、本人の状態に合わせて段階的に切り替えます。</p>
+  </div>
+
+  <div class="lsec" id="l-triage">
+    <h3>仕分けとアプローチ早見</h3>
+    <div class="lrow">
+      <div class="lbox red"><b>脳病変そのものに起因</b>記憶障害・見当識障害など<br>→ 本人を変えない。環境と<br>かかわり方・受け止め方を変える</div>
+      <div class="larrow"></div>
+      <div class="lbox"><b>相互作用で生じる</b>不安からの介護抵抗、<br>不快な環境からの帰宅要求など<br>→ 8因子へ働きかける</div>
+    </div>
+    <h4>ユマニチュード：4つの柱＋5つのステップ</h4>
+    <div class="lgrid4">
+      <div class="lbox"><b>見る</b>同じ高さ・近く・正面</div>
+      <div class="lbox"><b>話す</b>低め・前向き・実況</div>
+      <div class="lbox"><b>触れる</b>広く・つかまない・ゆっくり</div>
+      <div class="lbox"><b>立つ</b>1日合計20分</div>
+    </div>
+    <p>すべての介護を1つの物語として：①出会いの準備（許可を得る）→②ケアの準備（合意）→③知覚の連結（ケア）→④感情の固定（よい時間をふり返る）→⑤再会の約束。柱は複数同時に使う（マルチモーダル・ケア）。</p>
+    <h4>技法の適応と注意</h4>
+    <table class="ltable">
+      <tr><th>バリデーション</th><td>気持ちを認めて寄り添う。①情報整理→②フェーズ（1〜4、日内でも変動）を知る→③テクニックを選ぶ</td></tr>
+      <tr><th>リアリティ<br>オリエンテーション</th><td>軽度AD向き。情報は小出しに。<span class="warn">重度で過去の世界に生きる人には逆効果</span>（「ご主人はやさしかったですか」と過去形で）</td></tr>
+      <tr><th>回想法</th><td>「教えてもらう」態度と感謝。ADは小グループ・血管性は1対1。<span class="warn">つらい記憶に注意</span>。作業回想法は本人が先生役に</td></tr>
+      <tr><th>音楽・芸術</th><td>「みんなでカラオケ」では効果なし。時代・好みをアセスメントし反応をみて進行</td></tr>
+      <tr><th>共通の土台</th><td>脳活性化リハ5原則：楽しく／双方向／役割／ほめる・感謝／エラーレスで自尊心を守る</td></tr>
+    </table>
+  </div>
+
+  <div class="lsec" id="l-env">
+    <h3>環境づくりと食事のケア</h3>
+    <h4>環境づくり6つのポイント</h4>
+    <div class="lgrid4" style="grid-template-columns:repeat(3,1fr)">
+      <div class="lbox"><b>①</b>「私」が暮らせる環境<br>（一人称で考える）</div>
+      <div class="lbox"><b>②</b>家庭的で親しみやすい</div>
+      <div class="lbox"><b>③</b>わかりやすい＝日常がある</div>
+      <div class="lbox"><b>④</b>五感に訴えかける</div>
+      <div class="lbox"><b>⑤</b>自立心・自尊心・個性<br>（なじみの物・選択性）</div>
+      <div class="lbox"><b>⑥</b>「生活」のための環境</div>
+    </div>
+    <p>「ここがお家ですよ」と理屈で説得しても、感覚的に「家」と思える環境と安心の雰囲気がなければ家にはなりません。落とし穴：よかれと思ったBGMが逆効果（音の選択的聴取の低下）／床の強いコントラストは段差と誤認され恐怖のもと／レビー小体型では細かい模様が幻視を誘発／中途半端な表示はかえって混乱。</p>
+    <h4>食事のケア：つまずく段階で考える</h4>
+    <table class="ltable">
+      <tr><th>食欲</th><td>活動量低下／便秘（下剤の前に水分・食物繊維・トイレ排泄）／痛み・薬の副作用／注意障害→顔なじみと落ち着く食卓で解決</td></tr>
+      <tr><th>認知期</th><td>足底を床につけた座位で覚醒を上げる。常食に近い形状・色のついた茶碗・好物と香り</td></tr>
+      <tr><th>咀嚼</th><td>義歯の調整不良が多い→歯科連携。口腔ケアで舌苔予防</td></tr>
+      <tr><th>嚥下</th><td><span class="warn">きざみ食はかえって誤嚥を招くことがある</span>。やわらか煮・餡かけ。姿勢を整え、ゆっくり自分のペースで（介助摂取は誤嚥率が高い）</td></tr>
+      <tr><th>会食</th><td>怒り・離席の多くは指示・命令と感じる刺激や孤独。器を勝手に動かさない・注意しない・待つ・仲間として受け入れる</td></tr>
+    </table>
+    <h4>運用サイクル</h4>
+    <div class="lrow">
+      <div class="lbox"><b>月次ラウンド</b>で気づく</div><div class="larrow">▶</div>
+      <div class="lbox amber"><b>事例検討</b>で仮説と計画</div><div class="larrow">▶</div>
+      <div class="lbox"><b>フロアで実行</b>担当・期限つき</div><div class="larrow">▶</div>
+      <div class="lbox"><b>翌月に振り返り</b>継続 or 修正</div>
+    </div>
+    <div class="lnote red">うまくいかなければ「身体の確認」に戻って再分析する。</div>
+  </div>
+
+  <div style="text-align:center;margin:20px 0">
+    <button class="btn pri" onclick="hideLearn()">検討画面に戻る</button>
+  </div>
+</div>
+
+
+</main>
+
+<footer class="fixbar">
+  <div class="fixin">
+    <button class="btn ghost" id="prevbtn" onclick="move(-1)">← 戻る</button>
+    <span class="gatehint" id="gatehint"></span>
+    <button class="btn pri" id="nextbtn" onclick="move(1)">次へ →</button>
+  </div>
+</footer>
+
+<script>
+/* ============ 共有設定（GAS＋スプレッドシート） ============
+   複数端末で記録を共有する場合：
+   1. Googleスプレッドシートを新規作成（例：事例検討記録）
+   2. 拡張機能 → Apps Script を開き、同梱の「事例検討_GASコード.gs」の内容を
+      すべて貼り付けて保存
+   3. デプロイ →「新しいデプロイ」→ 種類「ウェブアプリ」
+      ・実行ユーザー：自分
+      ・アクセスできるユーザー：全員
+      でデプロイし、表示されたウェブアプリのURLをコピー
+   4. 下の GAS_URL の "" の中に、コピーしたURLを貼り付ける
+   ※ "" のままでも動作します（この端末のみのローカル保存になります） */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbw4ZwzlLaLdbSQz4r0tAn_Ea7GYh78OEzcePp0KFTzznrZhZy7y0gG8bIgYLRMchLB1/exec";
+
+let CLOUD=false, RECS=[];
+function setSync(t,ok){const e=document.getElementById("syncstat");if(e){e.textContent=t;e.style.background=ok?"#3E8E6E":"rgba(255,255,255,.18)";}}
+async function initCloud(){
+  if(!GAS_URL){setSync("ローカル保存",false);return;}
+  setSync("接続確認中…",false);
+  try{
+    const res=await fetch(GAS_URL+"?action=ping",{method:"GET"});
+    const j=await res.json();
+    if(j&&j.status==="ok"){CLOUD=true;setSync("共有ON",true);}
+    else throw new Error("bad response");
+  }catch(e){ CLOUD=false; setSync("共有エラー→ローカル",false); console.error(e); }
+}
+async function cloudSave(rec){
+  if(!CLOUD)return false;
+  try{
+    const res=await fetch(GAS_URL,{method:"POST",body:JSON.stringify({action:"save",type:"jirei",rec:rec})});
+    const j=await res.json();
+    return j&&j.status==="ok";
+  }catch(e){ console.error(e); return false; }
+}
+async function cloudFetch(){
+  if(!CLOUD)return null;
+  try{
+    const res=await fetch(GAS_URL+"?action=list&type=jirei");
+    const j=await res.json();
+    return Array.isArray(j.records)?j.records:null;
+  }catch(e){ console.error(e); return null; }
+}
+async function cloudDelete(id){
+  if(!CLOUD)return;
+  try{ await fetch(GAS_URL,{method:"POST",body:JSON.stringify({action:"delete",type:"jirei",id:id})}); }catch(e){ console.error(e); }
+}
+
+/* ============ マスターデータ ============ */
+const SYMPTOMS = {
+  "中核症状に関連する症状・行動": ["同じ質問・要求の繰り返し","食事したことを忘れる","時間の混乱・昼夜逆転","迷子・出口を探して歩く","他の人の部屋に入る","トイレ以外での排泄","人物誤認・鏡現象","作話・つじつまの合わない話","病識の欠如（病気と認めない）","身なりに無頓着"],
+  "精神症状": ["幻視・幻聴","物盗られ妄想・被害妄想","嫉妬妄想","夜間不眠・睡眠障害","抑うつ・不安の訴え","何度も薬やトイレを要求","自発性の低下・無関心","易怒・焦燥・興奮","感情失禁・人格変化"],
+  "行動コントロールの障害": ["脱抑制（他人の物を持っていく等）","卑わいな言動・性的逸脱","帰宅要求・無断離設","徘徊","過食・拒食・異食","甘味嗜好の変化","夜間不穏・多動","収集癖・物への執着","仮性作業・常同行動","器物破損・破衣","無言・無為無動"],
+  "対人関係の障害": ["依存・まとわりつき","孤立・ひきこもり","介護への抵抗・拒否","入浴拒否・更衣拒否","家族との面会拒否","攻撃的な言動（暴言）","暴力"]
+};
+const HINT_SYMS = new Set(["徘徊","帰宅要求・無断離設","迷子・出口を探して歩く","夜間不穏・多動","介護への抵抗・拒否","入浴拒否・更衣拒否","収集癖・物への執着","過食・拒食・異食"]);
+const DELIRIUM_CHECKS = [
+  "今回の症状・状態変化は、ここ数日〜数週間の間に「急激に」始まった（急性発症）",
+  "1日の中で、症状の強さや意識の状態が時間帯によって大きく変化する（日内変動・夜間の悪化）"
+];
+const BODYCHECKS = [
+  "いつもと状態・表情が違う（苦痛・不快な表情、顔色、行動の急な変化）",
+  "バイタルサインがいつもの値と大きく違う",
+  "新しく始まった薬・変更された薬がある",
+  "5種類以上の内服薬がある（副作用・転倒リスク）",
+  "痛みのサインがある（眉をしかめる・うめき・硬直・ケアや食事の拒否・叫び）",
+  "便秘している／排便の状況が把握できていない",
+  "食事量・水分量がいつもより減っている",
+  "発熱・脱水・感染症の徴候がある"
+];
+const FACTORS = [
+ {t:"病気の影響・薬の副作用",
+  q:"「現病歴や既往歴の悪化、新しい薬や薬の変更、薬の副作用が、この言動に影響している可能性はありませんか？」",
+  checks:["現病歴・既往歴の悪化はないか","認知症治療薬や鎮痛剤による不調・食欲低下はないか","薬剤の副作用・薬剤性せん妄の可能性はないか（新規処方・多剤併用）","服薬管理がうまくいっていない（飲み忘れ・重複）"],
+  resp:["看護師・薬剤師・主治医に相談し、新規処方や薬剤の影響を確認する","服用回数の見直し・一包化を主治医へ相談する","お薬カレンダー等で1回量をわかりやすくする","様子を観察し医療職へ情報提供する"]},
+ {t:"身体的な不調（痛み・便秘・不眠・空腹）",
+  q:"「言葉にできない痛み・便秘・不眠・空腹・脱水が、この言動の引き金になっている可能性はありませんか？」",
+  checks:["痛みがある可能性（訴えられないだけではないか）","便秘が続いていないか","不眠・睡眠リズムの乱れはないか","空腹・脱水はないか"],
+  resp:["「どこが痛みますか？」と軽く触れながら閉じた質問で確認する","便秘：下剤の前に活動量・水分・食物繊維・トイレでの排泄を整える","3ステップ（聞く→いつもと比較→触れて反応をみる）で身体を確認する","仮説が立ったら医療職と共有し治療につなげる"]},
+ {t:"精神的苦痛・心理的背景",
+  q:"「不安・焦り・孤独・自信や役割の喪失、失敗を指摘される場面が、この言動の背景にありませんか？」",
+  checks:["不安・焦り・孤独を感じる場面がなかったか","失敗を指摘される・注意される場面がなかったか","自信や役割を失う出来事がなかったか","もともとの性格・ストレスへの反応が影響していないか"],
+  resp:["保持されている能力・楽しめることに視点を切り替える","感情を否定せず受け止める（バリデーション）","失敗しないでできる役割をつくり、感謝し、ほめる","回想法：なじみの話題・得意だった作業で自信を取り戻す機会をつくる"]},
+ {t:"五感への刺激・苦痛を与える環境",
+  q:"「耳ざわりな音、まぶしさ・暗さ、暑さ寒さ、不快なにおいなど、五感への刺激が影響していませんか？」",
+  checks:["テレビや食器の音など耳ざわりな音はないか","光・暑さ寒さは適切か","不快なにおいはないか","感覚刺激が注意をそらし混乱を招いていないか"],
+  resp:["騒音を減らし、目の前を人が横切らないようにする","落ち着ける雰囲気に整え、刺激を1つずつ取り除いて反応をみる","感覚が鋭敏になっている前提で環境の刺激を調整する"]},
+ {t:"周囲の人のかかわり方・態度",
+  q:"「私たちの声かけやかかわりが、指示・命令と受け取られたり、急に触れたりしていませんか？（正直にふり返りましょう。責める場ではありません）」",
+  checks:["指示・命令と受け取られる言葉かけはなかったか","声をかけずに急に身体に触れていないか（コンタクトケアの省略）","本人のペースを妨げていないか（器の位置・過度な促し）","本人の価値を低めるかかわりになっていないか"],
+  resp:["コンタクトケア：正面から目の高さを合わせ、会釈→名前→了解を得てから介助（10〜15秒）","短い文章・1文1メッセージ・指示語を避け、生活歴に即した表現を使う","ユマニチュードの4つの柱（見る・話す・触れる・立つ）を同時に使う。触れるときは広い面積で・つかまない","閉じた質問→返事を求めない語りかけへ段階的に切り替える"]},
+ {t:"物的環境による居心地の悪さ",
+  q:"「居室移動や環境の変化、場所や道具のわかりにくさ、なじみの物のなさが影響していませんか？」",
+  checks:["環境の変化（居室移動・模様替え・入所直後）がなかったか","道具の使い方・場所がわからなくなっていないか","トイレ・自室のわかる表示・目印があるか","なじみの物・使い慣れた道具があるか"],
+  resp:["わかりやすい目印・表示をつける（大きく・コントラスト明確に・目線の高さで）","なじみの物・思い出の物を持ち込み、環境を大きく変えない","食事とわかる形状・色のついた食器で視覚認知を補う","認識できている範囲に物を置く"]},
+ {t:"活動（アクティビティ）とのズレ",
+  q:"「今の活動は本人にとって複雑すぎたり、なじみがなかったり、退屈だったりしませんか？できる能力を使う機会はありますか？」",
+  checks:["活動が複雑・なじみがない・退屈ではないか","できる能力を使う機会がないまま代行されていないか","失敗体験が続いていないか","本人の要望と活動がずれていないか"],
+  resp:["脳活性化リハ5原則（楽しく・双方向・役割・ほめる/感謝・エラーレス）で組み直す","手続き記憶に残る昔の作業を活かす（作業回想法・本人が先生役に）","工程を簡単にして自分でできるよう工夫し、むずかしい部分だけともに行う","作品展示・販売など、ほめられ認められる機会につなげる"]},
+ {t:"生活歴・なじみの暮らしとのズレ",
+  q:"「長年の習慣や暮らし方と今の生活がずれていませんか？生活歴からみると意味のある行動ではありませんか？」",
+  checks:["長年の習慣（起床・食事・入浴・仕事の時間）と現状がずれていないか","生活歴からみて意味のある行動ではないか（例：夕方の帰宅要求＝夕食の支度の役割）","本人の価値観・こだわりを妨げていないか","なじみの暮らし方が継続できているか"],
+  resp:["生活史から手がかりを見つける（センター方式B-2等をチームで作成）","生活リズムを支援側の都合で一律にせず、自然なリズムを保つ","なじみの暮らし方（環境・関係・生活）の継続を支える","本人・家族から暮らしの歴史を聞き、行動の意味をチームで共有する"]}
+];
+
+/* ============ 状態 ============ */
+const PH_MIN=[2,5,3,10,3,5,2];
+let cur=0, selCats=new Set(), selSyms=new Set(), pickedResps=[];
+let totalSec=30*60, running=false, tick=null, phaseSec=PH_MIN.map(m=>m*60);
+const LS_KEY="jirei-kento-records";
+
+/* ============ 初期化 ============ */
+document.getElementById("f-date").value=new Date().toISOString().slice(0,10);
+const stepNames=["準備","事実","からだ","なぜ？\n8つの窓","気持ち","計画","決定"];
+const stepper=document.getElementById("stepper");
+stepNames.forEach((n,i)=>{
+  const d=document.createElement("div");d.className="st"+(i===0?" on":"");d.textContent=n.replace("\n"," ");
+  d.onclick=()=>{ if(i<cur) go(i); };
+  stepper.appendChild(d);
+});
+
+const catWrap=document.getElementById("catbtns");
+Object.keys(SYMPTOMS).forEach(cat=>{
+  const b=document.createElement("button");b.textContent=cat;
+  b.onclick=()=>{b.classList.toggle("on");
+    if(selCats.has(cat))selCats.delete(cat);else selCats.add(cat);renderChips();};
+  catWrap.appendChild(b);
+});
+function renderChips(){
+  const w=document.getElementById("symchips");w.innerHTML="";
+  selCats.forEach(cat=>SYMPTOMS[cat].forEach(s=>{
+    const c=document.createElement("span");c.className="chip"+(selSyms.has(s)?" on":"");c.textContent=s;
+    c.onclick=()=>{if(selSyms.has(s))selSyms.delete(s);else selSyms.add(s);c.classList.toggle("on");updateSymHint();};
+    w.appendChild(c);
+  }));
+  updateSymHint();
+}
+function updateSymHint(){
+  document.getElementById("symhint").style.display=[...selSyms].some(s=>HINT_SYMS.has(s))?"block":"none";
+}
+
+const delWrap=document.getElementById("deliriumchecks");
+DELIRIUM_CHECKS.forEach((t,i)=>{
+  const l=document.createElement("label");l.className="chk";
+  l.innerHTML=`<input type="checkbox" data-del="${i}"><span>${t}</span>`;
+  l.querySelector("input").onchange=()=>{ 
+    document.getElementById("delalert").style.display=[...document.querySelectorAll("[data-del]")].some(c=>c.checked)?"block":"none";};
+  delWrap.appendChild(l);
+});
+const bodyWrap=document.getElementById("bodychecks");
+BODYCHECKS.forEach((t,i)=>{
+  const l=document.createElement("label");l.className="chk";
+  l.innerHTML=`<input type="checkbox" data-body="${i}"><span>${t}</span>`;
+  l.querySelector("input").onchange=()=>{
+    document.getElementById("medalert").style.display=[...document.querySelectorAll("[data-body]")].some(c=>c.checked)?"block":"none";};
+  bodyWrap.appendChild(l);
+});
+
+const fWrap=document.getElementById("factors");
+FACTORS.forEach((f,fi)=>{
+  const d=document.createElement("div");d.className="factor";
+  const checksHtml=f.checks.map((c,ci)=>`<label class="chk"><input type="checkbox" data-f="${fi}" data-c="${ci}"><span>${c}</span></label>`).join("");
+  const respHtml=f.resp.map((r,ri)=>`<li data-f="${fi}" data-r="${ri}">${r}</li>`).join("");
+  d.innerHTML=`<div class="fhead"><span class="fnum">${fi+1}</span><span class="ftitle">${f.t}</span><span class="fcount"></span><span class="caret">▶</span></div>
+  <div class="fbody">
+    <div class="fscript">読み上げ：${f.q}</div>
+    ${checksHtml}
+    <div class="resp"><h4>▼ 対応のヒント（タップで計画に入れる）</h4><ul>${respHtml}</ul></div>
+    <label class="fld">この窓について出た意見・気づき</label><textarea data-note="${fi}" placeholder="出た意見・確認したい事実"></textarea>
+  </div>`;
+  d.querySelector(".fhead").onclick=()=>d.classList.toggle("open");
+  d.querySelectorAll("input[type=checkbox]").forEach(cb=>cb.onchange=()=>{
+    const n=[...d.querySelectorAll("input[type=checkbox]")].filter(c=>c.checked).length;
+    const badge=d.querySelector(".fcount");
+    badge.style.display=n?"inline-block":"none";badge.textContent=`該当 ${n}`;
+    d.querySelector(".resp").style.display=n?"block":"none";
+  });
+  d.querySelectorAll(".resp li").forEach(li=>li.onclick=()=>{
+    li.classList.toggle("sel");
+    const txt=`【${FACTORS[fi].t}】${li.textContent}`;
+    if(li.classList.contains("sel"))pickedResps.push(txt);
+    else pickedResps=pickedResps.filter(x=>x!==txt);
+    renderPicked();
+  });
+  fWrap.appendChild(d);
+});
+function renderPicked(){
+  const w=document.getElementById("pickedResp");
+  w.innerHTML=pickedResps.length?pickedResps.map(p=>`<div>・${p}</div>`).join(""):"（まだ選択されていません。フェーズ3に戻って選べます）";
+}
+
+document.getElementById("tri-brain").onchange=e=>{document.getElementById("tri-brain-guide").style.display=e.target.checked?"block":"none"};
+document.getElementById("tri-inter").onchange=e=>{document.getElementById("tri-inter-guide").style.display=e.target.checked?"block":"none"};
+
+function addPlanRow(who="",what="",when=""){
+  const w=document.getElementById("planrows");
+  const r=document.createElement("div");r.className="planrow";
+  r.innerHTML=`<input type="text" placeholder="誰が" value="${who}"><input type="text" placeholder="何を" value="${what}"><input type="text" placeholder="いつまでに" value="${when}"><button title="削除">×</button>`;
+  r.querySelector("button").onclick=()=>r.remove();
+  w.appendChild(r);
+}
+addPlanRow();
+
+/* ============ タイマー ============ */
+function fmt(s){const m=Math.floor(Math.abs(s)/60),ss=Math.abs(s)%60;return (s<0?"-":"")+String(m).padStart(2,"0")+":"+String(ss).padStart(2,"0");}
+function toggleTimer(){
+  running=!running;
+  document.getElementById("timerbtn").textContent=running?"一時停止":"再開";
+  if(running&&!tick){tick=setInterval(()=>{ if(!running)return;
+    totalSec--; phaseSec[cur]--;
+    const tt=document.getElementById("totaltime");
+    tt.textContent=fmt(totalSec); tt.classList.toggle("over",totalSec<0);
+    updatePhaseTime();
+  },1000);}
+}
+function updatePhaseTime(){
+  const el=document.querySelector(`.ptime[data-pt="${cur}"]`);
+  if(!el)return;
+  el.textContent=(phaseSec[cur]>=0?"残り ":"超過 ")+fmt(phaseSec[cur]);
+  el.classList.toggle("over",phaseSec[cur]<0);
+}
+
+/* ============ フェーズ移動と関門 ============ */
+function gateCheck(from){
+  if(from===0){
+    if(!gv("f-floor")) return "フロアを選んでください";
+    if(!gv("f-user")) return "利用者名を入力してください";
+    if(!gv("f-facilitator")) return "認知症実践指導者の名前を入力してください";
+    if(selSyms.size===0) return "検討する症状を1つ以上選択してください";
+  }
+  if(from===1){
+    if(!gv("f-fact1").trim()) return "「具体的な様子」を記録してください（事実が検討の土台です）";
+  }
+  if(from===2){
+    const dels=[...document.querySelectorAll("[data-del]")];
+    if(dels.some(c=>c.checked)){
+      if(!confirm("【約束ごと2】せん妄のサイン（急に始まった・時間帯で大きく変わる）に当てはまりがあります。本来は看護師・医師への相談が先です。\nすでに報告済み（または計画に報告を入れる前提）で、このまま続けますか？")) return "＿";
+    }
+  }
+  if(from===3){
+    const anyF=[...document.querySelectorAll('#factors input[type=checkbox]')].some(c=>c.checked);
+    if(!anyF) return "8つの窓のうち、少なくとも1つは当てはまりをチェックしてください（何もない場合はチェック①に戻り、からだを再確認）";
+  }
+  if(from===4){
+    const s=gv("f-sos").trim();
+    if(!s) return "本人の心の声（SOS）を入力してください（この会でいちばん大事な一文です）";
+    if(!/[私俺わし僕あたし]/.test(s)){
+      if(!confirm("【約束ごと3】心の声は本人の「私は〜」の形で書くルールです。その形になっていないかもしれません。このまま進みますか？")) return "＿";
+    }
+  }
+  if(from===5){
+    if(!document.getElementById("tri-brain").checked && !document.getElementById("tri-inter").checked)
+      return "この行動のタイプ（脳の病気そのもの／からんで起きている）を1つ以上チェックしてください";
+    const plans=[...document.querySelectorAll(".planrow")].filter(r=>{const i=r.querySelectorAll("input");return i[0].value&&i[1].value&&i[2].value;});
+    if(plans.length===0) return "「だれが・何を・いつまでに」がすべて入った計画を1件以上入力してください";
+    const bodyAny=[...document.querySelectorAll("[data-body]")].some(c=>c.checked);
+    const medPlan=pickedResps.concat([...document.querySelectorAll(".planrow input")].map(i=>i.value)).join("").includes("医療")||[...document.querySelectorAll(".planrow input")].some(i=>/看護|医師|主治医|受診|薬剤師/.test(i.value));
+    if(bodyAny&&!medPlan){
+      if(!confirm("からだのサインに当てはまりがあります。計画に「看護師・医師への報告」が入っていないようです。このまま進みますか？（戻って追加がおすすめ）")) return "＿";
+    }
+  }
+  return null;
+}
+function move(dir){
+  if(dir>0){
+    const msg=gateCheck(cur);
+    if(msg){ if(msg!=="＿"){document.getElementById("gatehint").textContent="⛔ "+msg; alert(msg);} return; }
+  }
+  go(cur+dir);
+}
+function go(n){
+  if(n<0||n>6)return;
+  document.getElementById("gatehint").textContent="";
+  document.querySelectorAll(".phase").forEach(p=>p.classList.remove("on"));
+  document.querySelector(`.phase[data-ph="${n}"]`).classList.add("on");
+  [...stepper.children].forEach((s,i)=>{s.className="st"+(i===n?" on":i<n?" done":"");});
+  cur=n;
+  document.getElementById("prevbtn").style.visibility=n===0?"hidden":"visible";
+  document.getElementById("nextbtn").style.display=n===6?"none":"inline-block";
+  updatePhaseTime();
+  if(n===6)buildMinutes();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ============ フロアの設定 ============
+   フロア名を変えるときは、この行の「」の中を書き換えてください（5つ以外でも動きます） */
+const FLOORS=["本館2階","本館3階","本館4階","新館2階","新館3階"];
+
+const flWrap=document.getElementById("floorbtns");
+FLOORS.forEach(f=>{
+  const b=document.createElement("button");b.type="button";b.textContent=f;
+  b.onclick=()=>{
+    const cur=document.getElementById("f-floor").value;
+    const nv=(cur===f)?"":f;
+    document.getElementById("f-floor").value=nv;
+    [...flWrap.children].forEach(x=>x.classList.toggle("on",x.textContent===nv));
+  };
+  flWrap.appendChild(b);
+});
+function setFloor(v){
+  document.getElementById("f-floor").value=v||"";
+  [...flWrap.children].forEach(x=>x.classList.toggle("on",x.textContent===v));
+}
+
+/* ============ 蓄積・継続（同じ利用者の履歴） ============ */
+const PREV_STATUS=["◎ 実行できて、良い変化があった","○ 実行できたが、変化は分からない","△ 一部しか実行できなかった","× 実行できなかった"];
+let prevStatusSel="", prevRec=null, ALLREC=[];
+
+const psWrap=document.getElementById("prevstatus");
+PREV_STATUS.forEach(t=>{
+  const c=document.createElement("span");c.className="chip";c.textContent=t;
+  c.onclick=()=>{prevStatusSel=(prevStatusSel===t)?"":t;
+    [...psWrap.children].forEach(x=>x.classList.toggle("on",x.textContent===prevStatusSel));};
+  psWrap.appendChild(c);
+});
+
+async function ensureAll(){
+  let all=null;
+  if(CLOUD) all=await cloudFetch();
+  if(all===null) all=loadAll();
+  else{
+    const ids=new Set(all.map(r=>r.id));
+    loadAll().forEach(r=>{if(!ids.has(r.id))all.push(r);});
+    all.sort((a,b)=>b.id-a.id);
+  }
+  ALLREC=all;
+  /* 利用者名の候補を更新 */
+  const dl=document.getElementById("userlist");
+  if(dl){ const names=[...new Set(all.map(r=>r.user).filter(Boolean))];
+    dl.innerHTML=names.map(n=>`<option value="${esc(n)}">`).join(""); }
+  return all;
+}
+function findPrev(){
+  const u=gv("f-user").trim();
+  const box=document.getElementById("prevbox");
+  if(!u){ box.style.display="none"; prevRec=null; return; }
+  const hist=ALLREC.filter(r=>(r.user||"").trim()===u).sort((a,b)=>b.id-a.id);
+  if(!hist.length){ box.style.display="none"; prevRec=null; return; }
+  prevRec=hist[0];
+  const n=hist.length;
+  let h=`<b>この方の検討は今回で ${n+1} 回目です。</b>（前回：${esc(prevRec.date)}）<br>`;
+  h+=`前回の心の声：${esc((prevRec.sos||"－").slice(0,60))}<br>`;
+  h+=`<b>前回決めたこと：</b><br>`;
+  h+=(prevRec.plans||[]).map(p=>`・${esc(p.who)}が「${esc(p.what)}」を${esc(p.when)}までに`).join("<br>")||"・（記録なし）";
+  document.getElementById("previnfo").innerHTML=h;
+  box.style.display="block";
+}
+
+/* ============ 議事録・保存 ============ */
+function gv(id){return document.getElementById(id).value}
+function collect(endedAs){
+  return {id:Date.now(),endedAs:endedAs||"通常終了",
+    date:gv("f-date"),floor:gv("f-floor"),user:gv("f-user"),
+    facilitator:gv("f-facilitator"),members:gv("f-members"),
+    cats:[...selCats],syms:[...selSyms],
+    facts:[gv("f-fact1"),gv("f-fact2"),gv("f-fact3"),gv("f-fact4")],
+    delirium:[...document.querySelectorAll("[data-del]")].map(c=>c.checked),
+    body:[...document.querySelectorAll("[data-body]")].map(c=>c.checked),
+    factors:FACTORS.map((f,fi)=>({
+      checks:[...document.querySelectorAll(`input[data-f="${fi}"]`)].map(c=>c.checked),
+      note:document.querySelector(`textarea[data-note="${fi}"]`).value})),
+    sos:gv("f-sos"),
+    triage:{brain:document.getElementById("tri-brain").checked,inter:document.getElementById("tri-inter").checked},
+    picked:[...pickedResps],
+    plans:[...document.querySelectorAll(".planrow")].map(r=>{const i=r.querySelectorAll("input");return{who:i[0].value,what:i[1].value,when:i[2].value};}).filter(p=>p.who||p.what||p.when),
+    prevReview: prevRec?{prevId:prevRec.id,prevDate:prevRec.date,status:prevStatusSel,memo:gv("f-prevmemo")}:null,
+    seq: prevRec?((prevRec.seq||1)+1):1,
+    ws:{age:gv("f-age"),sex:gv("f-sex"),no:gv("ws-no"),voice:gv("ws-voice"),behavior:gv("ws-behavior"),
+        q25a:gv("ws-q25a"),q25b:gv("ws-q25b"),checks:wsChecked(),other:gv("ws-other"),scene:gv("ws-scene"),
+        haikei:gv("ws-haikei"),plan1:gv("ws-plan1"),weeks:gv("ws-weeks"),goal:gv("ws-goal"),can:gv("ws-can"),cannot:gv("ws-cannot")},
+    review:gv("f-review")};
+}
+function minutesText(r){
+  let t=`◆ 認知症事例検討 議事録（${r.endedAs}）\n`;
+  t+=`開催日：${r.date}　フロア：${r.floor}\n対象：${r.user}\n認知症実践指導者：${r.facilitator}　参加：${r.members}\n`;
+  if(r.seq) t+=`この方の検討：${r.seq}回目\n`;
+  if(r.prevReview && (r.prevReview.status||r.prevReview.memo)){
+    t+=`\n◆ 前回（${r.prevReview.prevDate||"－"}）のふり返り\n・結果：${r.prevReview.status||"－"}\n・メモ：${r.prevReview.memo||"－"}\n`;
+  }
+  t+=`\n◆ 検討した症状\n${r.syms.join("、")||"-"}\n`;
+  t+=`\n◆ 事実\n・様子：${r.facts[0]||"-"}\n・起こらないとき：${r.facts[1]||"-"}\n・頻度・開始時期：${r.facts[2]||"-"}\n・ベースライン：${r.facts[3]||"-"}\n`;
+  const del=r.delirium.map((b,i)=>b?DELIRIUM_CHECKS[i]:null).filter(Boolean);
+  t+=`\n◆ 関門① せん妄・身体\n・せん妄サイン：${del.length?("⚠ "+del.join("／")+"（医療連携を優先）"):"該当なし"}\n`;
+  const bd=r.body.map((b,i)=>b?BODYCHECKS[i]:null).filter(Boolean);
+  t+=`・身体面の該当：${bd.length?bd.join("／"):"なし"}\n`;
+  t+=`\n◆ 背景分析（該当した因子）\n`;
+  let anyf=false;
+  r.factors.forEach((f,i)=>{
+    const hit=f.checks.map((c,ci)=>c?FACTORS[i].checks[ci]:null).filter(Boolean);
+    if(hit.length||f.note){anyf=true;t+=`【${FACTORS[i].t}】${hit.join("／")}${f.note?("　※"+f.note):""}\n`;}
+  });
+  if(!anyf)t+="（該当なし）\n";
+  t+=`\n◆ 本人の心の声（SOS）\n${r.sos||"-"}\n`;
+  t+=`\n◆ 症状の性質\n${[r.triage.brain?"脳病変起因あり→環境とかかわり方を変える":null,r.triage.inter?"相互作用あり→因子へ働きかける":null].filter(Boolean).join("／")||"-"}\n`;
+  t+=`\n◆ 決定事項（誰が・何を・いつまでに）\n${r.plans.map(p=>`・${p.who}が「${p.what}」を ${p.when} までに`).join("\n")||"-"}\n`;
+  if(r.picked.length)t+=`（参考：採用した標準対応）\n${r.picked.map(p=>"・"+p).join("\n")}\n`;
+  t+=`\n◆ 振り返り\n次回 ${r.review||"（未設定）"} の事例検討で本計画の評価から開始する。\n`;
+  return t;
+}
+function buildMinutes(){document.getElementById("minutes").textContent=minutesText(collect());}
+function copyMinutes(){
+  const t=document.getElementById("minutes").textContent;
+  navigator.clipboard.writeText(t).then(()=>alert("議事録をコピーしました。申し送りやノートに貼り付けて共有してください。"),
+    ()=>alert("コピーできませんでした。議事録を長押し（または選択）してコピーしてください。"));
+}
+function loadAll(){try{return JSON.parse(localStorage.getItem(LS_KEY))||[]}catch(e){return[]}}
+function localSave(rec){
+  const all=loadAll();all.unshift(rec);
+  try{localStorage.setItem(LS_KEY,JSON.stringify(all));}catch(e){}
+}
+async function saveRecord(silent){
+  const rec=collect();
+  if(!rec.user){alert("利用者名を入力してください。");return;}
+  localSave(rec);
+  let cloudOK=false;
+  if(CLOUD){ setSync("同期中…",true); cloudOK=await cloudSave(rec); setSync(cloudOK?"共有ON":"共有エラー→ローカル",cloudOK); }
+  if(!silent){
+    if(cloudOK)alert("保存しました。共有データベースに同期済みです（他の端末からも閲覧できます）。");
+    else if(CLOUD)alert("端末には保存しましたが、共有データベースへの同期に失敗しました。通信環境を確認し、記録一覧から再保存してください。");
+    else alert("保存しました。※この端末のブラウザ内にのみ保存されます。共有するにはGAS設定（ファイル上部の説明参照）を行ってください。");
+  }
+  clearDraft();
+  showRecords();
+}
+async function closeAsDelirium(){
+  if(!confirm("この検討を「せん妄疑い・医療連携」として記録し、終了しますか？\n（看護師・医師への報告を最優先してください）"))return;
+  const rec=collect("せん妄疑いのため中断・医療連携");
+  localSave(rec);
+  if(CLOUD)await cloudSave(rec);
+  clearDraft();
+  go(6);
+  document.getElementById("minutes").textContent=minutesText(rec);
+  alert("記録しました。医療職への報告をお願いします。身体的要因の治療後、必要ならあらためて事例検討を行ってください。");
+}
+let recMode="user", recFloor="";
+async function showRecords(){
+  const w=document.body.classList.contains("recmode")
+    ? document.getElementById("reclist2")
+    : document.getElementById("reclist");
+  if(!w) return;
+  w.innerHTML='<div class="empty">読み込み中…</div>';
+  let all=await ensureAll();
+  if(!all.length){w.innerHTML='<div class="empty">保存された検討記録はまだありません。</div>';return;}
+  RECS=all;
+  /* フロア絞り込み */
+  let h='<div style="margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">'
+   +'<span style="font-size:12.5px;color:var(--ink-soft);font-weight:700">フロア：</span>'
+   +`<button class="btn ${recFloor===""?"pri":"ghost"}" style="padding:7px 13px;font-size:13px" onclick="recFloor='';showRecords()">すべて</button>`
+   + FLOORS.map(f=>`<button class="btn ${recFloor===f?"pri":"ghost"}" style="padding:7px 13px;font-size:13px" onclick="recFloor='${f}';showRecords()">${f}</button>`).join("")
+   +'</div>';
+  if(recFloor) all=all.filter(r=>(r.floor||"")===recFloor);
+  if(!all.length){ w.innerHTML=h+'<div class="empty">'+esc(recFloor)+'の記録はまだありません。</div>'; return; }
+  h+='<div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap">'
+   +`<button class="btn ${recMode==="user"?"pri":"ghost"}" style="padding:8px 14px;font-size:13px" onclick="recMode='user';showRecords()">利用者ごと</button>`
+   +`<button class="btn ${recMode==="date"?"pri":"ghost"}" style="padding:8px 14px;font-size:13px" onclick="recMode='date';showRecords()">日付順</button>`
+   +'<button class="btn sec2" style="padding:8px 14px;font-size:13px" onclick="exportCSV()">CSVエクスポート</button>'
+   +(CLOUD?'<button class="btn ghost" style="padding:8px 14px;font-size:13px" onclick="showRecords()">再読み込み</button>':'')
+   +'</div>';
+
+  if(recMode==="date"){
+    all.forEach(r=>{ h+=recCard(r); });
+  }else{
+    /* 利用者ごとにまとめる */
+    const groups={};
+    all.forEach(r=>{ const k=(r.user||"（未入力）").trim(); (groups[k]=groups[k]||[]).push(r); });
+    Object.keys(groups).sort().forEach(name=>{
+      const list=groups[name].sort((a,b)=>b.id-a.id);
+      const last=list[0];
+      const q25=list.map(r=>r.ws&&r.ws.q25a).filter(x=>x!==undefined&&x!=="");
+      let head=`<div class="card" style="padding:14px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+          <b style="font-size:16.5px;color:var(--green-dark)">${esc(name)}</b>
+          <span style="font-size:12.5px;color:var(--ink-soft)">${esc(last.floor||"")}｜検討 ${list.length}回｜最新 ${esc(last.date)}</span>
+        </div>`;
+      if(q25.length) head+=`<div style="font-size:13px;margin-top:4px">BPSD25Qの推移：${q25.slice().reverse().join(" → ")}</div>`;
+      head+=`<div style="font-size:13px;margin-top:4px;color:var(--ink-soft)">最新の心の声：${esc((last.sos||"－").slice(0,60))}</div>`;
+      head+=`<div style="font-size:13px;margin-top:6px"><b>いま取り組んでいること：</b><br>`
+        +((last.plans||[]).map(p=>`・${esc(p.who)}が「${esc(p.what)}」を${esc(p.when)}までに`).join("<br>")||"・（記録なし）")+`</div>`;
+      head+=`<div class="racts" style="margin-top:8px"><button onclick="toggleHist('${esc(name)}')">検討の履歴を開く（${list.length}件）</button></div>
+        <div id="hist-${encodeURIComponent(name)}" style="display:none;margin-top:8px;border-top:1px dashed var(--line);padding-top:8px">
+        ${list.map(r=>recCard(r,true)).join("")}</div></div>`;
+      h+=head;
+    });
+  }
+  w.innerHTML=h;
+}
+function recCard(r,inner){
+  const seq=r.seq?`<span class="tag">${r.seq}回目</span>`:"";
+  const pr=(r.prevReview&&r.prevReview.status)?`<div style="font-size:12.5px;color:var(--amber)">前回のふり返り：${esc(r.prevReview.status)}</div>`:"";
+  return `<div class="rec" style="${inner?'box-shadow:none;':''}">
+    <div class="rtop"><b>${inner?esc(r.date):esc(r.user)}</b><span style="font-size:12px;color:var(--ink-soft)">${inner?"":esc(r.date)+"｜"}指導者:${esc(r.facilitator)}｜${esc(r.endedAs)}</span></div>
+    <div>${seq}${(r.syms||[]).slice(0,5).map(x=>`<span class="tag">${esc(x)}</span>`).join("")}</div>
+    ${pr}
+    <div style="font-size:13px;margin-top:4px">${esc((r.sos||"").slice(0,70))}${(r.sos||"").length>70?"…":""}</div>
+    <div class="racts"><button onclick="viewRec(${r.id})">議事録を表示</button><button onclick="continueFrom(${r.id})">この方の続きを始める</button><button style="color:var(--red)" onclick="delRec(${r.id})">削除</button></div></div>`;
+}
+function toggleHist(name){
+  const el=document.getElementById("hist-"+encodeURIComponent(name));
+  if(el) el.style.display=(el.style.display==="none")?"block":"none";
+}
+function continueFrom(id){
+  const r=ALLREC.find(x=>x.id===id)||loadAll().find(x=>x.id===id);
+  if(!r)return;
+  if(!confirm(`${r.user} さんの続きの検討を始めます。\n入力中の内容はクリアされます。よろしいですか？`))return;
+  clearDraft();
+  const sv=(i,v)=>{const el=document.getElementById(i);if(el&&v!==undefined&&v!==null)el.value=v;};
+  location.hash="";
+  /* 基本情報だけ引き継ぐ */
+  sessionStorage.setItem("jirei-continue",JSON.stringify({user:r.user,floor:r.floor,age:(r.ws||{}).age,sex:(r.ws||{}).sex}));
+  location.reload();
+}
+function viewRec(id){const r=RECS.find(x=>x.id===id)||loadAll().find(x=>x.id===id);if(r)alert(minutesText(r));}
+async function delRec(id){
+  if(!confirm("この記録を削除しますか？（共有データベースからも削除されます）"))return;
+  localStorage.setItem(LS_KEY,JSON.stringify(loadAll().filter(x=>x.id!==id)));
+  if(CLOUD)await cloudDelete(id);
+  showRecords();
+}
+function esc(s){return String(s||"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
+function exportCSV(){
+  const all=RECS.length?RECS:loadAll();if(!all.length){alert("記録がありません。");return;}
+  const head=["日付","フロア","利用者","検討回数","前回のふり返り結果","前回のふり返りメモ","認知症実践指導者","参加者","終了区分","症状","事実_様子","事実_起こらないとき","事実_頻度","ベースライン","せん妄サイン","身体面該当","該当因子","本人の心の声SOS","症状の性質","決定事項","振り返り予定"];
+  const rows=all.map(r=>{
+    const del=(r.delirium||[]).map((b,i)=>b?DELIRIUM_CHECKS[i]:null).filter(Boolean).join("／");
+    const bd=(r.body||[]).map((b,i)=>b?BODYCHECKS[i]:null).filter(Boolean).join("／");
+    const fh=[];(r.factors||[]).forEach((f,i)=>{const hit=f.checks.map((c,ci)=>c?FACTORS[i].checks[ci]:null).filter(Boolean);if(hit.length)fh.push(`【${FACTORS[i].t}】`+hit.join("・"));});
+    const tri=r.triage?[r.triage.brain?"脳病変起因":null,r.triage.inter?"相互作用":null].filter(Boolean).join("＋"):"";
+    return [r.date,r.floor,r.user,r.seq||1,(r.prevReview||{}).status||"",(r.prevReview||{}).memo||"",r.facilitator,r.members,r.endedAs,(r.syms||[]).join("／"),r.facts[0],r.facts[1],r.facts[2],r.facts[3],del,bd,fh.join("／"),r.sos,tri,(r.plans||[]).map(p=>`${p.who}が${p.what}を${p.when}までに`).join("／"),r.review];
+  });
+  const csv="\uFEFF"+[head,...rows].map(r=>r.map(c=>`"${String(c||"").replace(/"/g,'""')}"`).join(",")).join("\r\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.download="事例検討記録_"+new Date().toISOString().slice(0,10)+".csv";a.click();
+}
+/* ============ デモ ============ */
+function loadDemo(){
+  if(!confirm("デモ事例（ショートステイ利用中・夕方の帰宅要求のA様）を読み込みます。\n入力中の内容は上書きされます。よろしいですか？"))return;
+  const sv=(id,v)=>{document.getElementById(id).value=v};
+  setFloor("本館2階");sv("f-user","A様（デモ）");
+  sv("f-facilitator","春名");sv("f-members","川上、安井、溝川、佐藤、瀧川");
+  /* 症状の選択 */
+  selCats.clear();selSyms.clear();
+  selCats.add("行動コントロールの障害");selCats.add("精神症状");
+  document.querySelectorAll("#catbtns button").forEach(b=>b.classList.toggle("on",selCats.has(b.textContent)));
+  selSyms.add("帰宅要求・無断離設");selSyms.add("抑うつ・不安の訴え");
+  renderChips();
+  /* 事実 */
+  sv("f-fact1","ショートステイ利用3日目。毎日夕方16時ごろになると「ご飯の支度をしないと、旦那に叱られるから帰ります」と言って玄関に来る。職員が説明すると「あっ、そうだったわね」と一度は納得して席に戻るが、夕食が始まるまで数分ごとに同じことを繰り返す。");
+  sv("f-fact2","日中はとくに言わない。夜中もぐっすり休んでいる。洗濯物をたたむ手伝いをしているときは落ち着いている。");
+  sv("f-fact3","入所初日から毎日、夕方の時間帯のみ。");
+  sv("f-fact4","食事は主食・副食ともほぼ全量、排便2日に1回、血圧はいつも130台、睡眠は良好。意識レベルの変動なし。");
+  /* 関門①：せん妄なし・身体は1件のみ該当させる */
+  document.querySelectorAll("[data-del]").forEach(c=>{if(c.checked)c.click();});
+  document.querySelectorAll("[data-body]").forEach(c=>{if(c.checked)c.click();});
+  const bodyCb=document.querySelector('[data-body="6"]');
+  if(bodyCb&&!bodyCb.checked)bodyCb.click(); /* 水分量が減っている（夕方の落ち着かなさで） */
+  /* 8因子：該当チェック */
+  document.querySelectorAll('#factors input[type=checkbox]').forEach(c=>{if(c.checked)c.click();});
+  document.querySelectorAll('#factors .resp li.sel').forEach(li=>li.click());
+  [["2","0"],["2","2"],["5","0"],["7","1"],["7","3"]].forEach(([f,c])=>{
+    const cb=document.querySelector(`input[data-f="${f}"][data-c="${c}"]`);
+    if(cb&&!cb.checked)cb.click();
+  });
+  document.querySelector('textarea[data-note="2"]').value="夕方、フロアの職員が食事準備で忙しくなり、1人になる時間帯と重なっている。";
+  document.querySelector('textarea[data-note="7"]').value="長年、夕方に家族の夕食の支度をするのがA様の役割だった（ご家族談）。帰宅要求は「役割を果たしたい」という意味のある行動と考えられる。";
+  /* 標準対応の採用 */
+  [["2","2"],["7","0"],["7","2"]].forEach(([f,r])=>{
+    const li=document.querySelector(`.resp li[data-f="${f}"][data-r="${r}"]`);
+    if(li&&!li.classList.contains("sel"))li.click();
+  });
+  /* SOS */
+  sv("f-sos","（私は）夕方になったら家族のご飯の支度をしなければいけないのに、知らない場所にいて帰らせてもらえない。やるべきことができなくて、不安で仕方がない。");
+  /* 仕分け */
+  ["tri-brain","tri-inter"].forEach(id=>{const c=document.getElementById(id);if(!c.checked)c.click();});
+  /* 計画 */
+  document.getElementById("planrows").innerHTML="";
+  addPlanRow("川上・フロア職員","夕方15時半に、洗濯物たたみ・おしぼり準備を「お願いごと」として毎日依頼し、夕方の役割をつくる","今日から毎日");
+  addPlanRow("春名","説得や訂正はせず、「いつも支度してこられたんですね」と受け止める声かけに統一する（申し送りで周知）","今週中");
+  addPlanRow("溝川（看護師）","夕方の水分摂取量の低下について看護師と共有し、15時のお茶をA様の好みの温かい緑茶に変更","3日以内");
+  const d=new Date();d.setMonth(d.getMonth()+1);
+  sv("f-review",d.toISOString().slice(0,10));
+  /* ワークシート項目 */
+  sv("f-age","84");document.getElementById("f-sex").value="女性";
+  sv("ws-no","5");sv("ws-voice","ご飯の支度をしないと。旦那に叱られるから帰ります");
+  sv("ws-behavior","夕方になると玄関に向かい、帰宅を訴える。洗濯物をたたむ手伝いの間は穏やかに過ごされる。");
+  sv("ws-q25a","23");sv("ws-q25b","");
+  document.querySelectorAll("[data-ws]").forEach(c=>c.classList.remove("on"));
+  ["0-1","0-2","2-1","2-6","2-9","3-3","3-4","3-5"].forEach(k=>{ /* 水分・睡眠／役割・人間関係・生活歴／なじみの場所・関係・コミュニケーション */
+    const c=document.querySelector(`[data-ws="${k}"]`);if(c)c.classList.add("on");
+  });
+  sv("ws-other","夕方、フロアが慌ただしくなる時間帯に落ち着かなくなる");
+  sv("ws-scene","夕方16時ごろ〜夕食まで。日中・夜間はみられない。洗濯物をたたんでいる間は落ち着いている。");
+  sv("ws-haikei","長年「夕方に家族の夕食の支度をする」役割を担ってきた生活歴があり、入所直後のなじみのない環境で、夕方に役割を果たせないことへの不安と焦りが帰宅要求として表れていると考えられる。まずは夕方の役割づくりに焦点を当ててはどうか。");
+  sv("ws-plan1","夕方15時半に、洗濯物たたみ・おしぼり準備を「お願いごと」として毎日依頼し、夕方の役割をつくる。");
+  sv("ws-weeks","4");sv("ws-goal","夕方に役割を持って穏やかに過ごし、玄関へ向かう回数が減る");
+  sv("ws-can","時計を見て時間がわかる。洗濯物を丁寧にたたむことができる。感謝されると笑顔がみられる。");
+  sv("ws-cannot","ここが自宅でないことを覚えておくことができない。夕方の予定を自分から確認することがむずかしい。");
+  go(0);
+  alert("デモ事例を読み込みました。\n\n【デモの見方】\n・「次へ」で7つのフェーズを順にご覧ください。各フェーズの緑の枠が読み上げ台本です。\n・フェーズ2で、せん妄チェックに手動でチェックを入れると警告と中断ボタンの動きを確認できます。\n・フェーズ4のSOSを一人称でない文（例：帰宅要求が続いて困る）に書き換えると、運用基準3の確認が出ます。\n・フェーズ6で完成した議事録とコピー機能を確認できます。");
+}
+
+/* ============ 加算ワークシート項目 ============ */
+const WS_GROUPS=[
+ {g:"健康状態・身体的ニーズ",items:["食事摂取量","水分摂取量","睡眠状態","排尿","排便","痛み","皮膚の状態","運動・動作","視覚","聴覚","その他の健康・身体要因"]},
+ {g:"薬剤情報",items:["ドネペジル（アリセプト）","ガランタミン（レミニール）","リバスチグミン（リバスタッチパッチ/イクセロンパッチ）","メマンチン（メマリー）","服薬状況の変化","その他の薬剤要因（抗精神病薬等）"]},
+ {g:"その他の要因（活動・参加・個人要因など）",items:["生きがい","役割","趣味","好み","外出","経済的状況","人間関係","やる気・自信","宗教行事","生活歴・人生史","その他の要因"]},
+ {g:"環境",items:["周囲の音・声","周囲のにおい","気温・室温（暑い・寒い）","なじみの場所","なじみの関係","コミュニケーション","その他の環境要因"]}
+];
+const wsWrap=document.getElementById("wschecks");
+WS_GROUPS.forEach((grp,gi)=>{
+  const lab=document.createElement("label");lab.className="fld";lab.textContent=grp.g;wsWrap.appendChild(lab);
+  const box=document.createElement("div");box.className="chips";
+  grp.items.forEach((it,ii)=>{
+    const c=document.createElement("span");c.className="chip";c.textContent=it;c.dataset.ws=gi+"-"+ii;
+    c.onclick=()=>c.classList.toggle("on");
+    box.appendChild(c);
+  });
+  wsWrap.appendChild(box);
+});
+function wsChecked(){
+  const out=WS_GROUPS.map(g=>g.items.map(()=>false));
+  document.querySelectorAll("[data-ws]").forEach(c=>{
+    if(c.classList.contains("on")){const[a,b]=c.dataset.ws.split("-").map(Number);out[a][b]=true;}
+  });
+  return out;
+}
+function autoHaikei(){
+  const hits=[];
+  FACTORS.forEach((f,i)=>{
+    const anyc=[...document.querySelectorAll(`input[data-f="${i}"]`)].some(c=>c.checked);
+    if(anyc)hits.push(f.t);
+  });
+  const sos=gv("f-sos").trim();
+  let t="";
+  if(hits.length)t+=hits.join("、")+"が背景要因として考えられる。";
+  if(sos)t+="本人の視点では「"+sos.replace(/^（?私は）?/,"")+"」という状態と推測される。";
+  t+="まずは（　　　）に焦点を当ててはどうか。";
+  document.getElementById("ws-haikei").value=t;
+}
+function copyPlan1(){
+  const r=document.querySelector(".planrow");
+  if(!r)return;
+  const i=r.querySelectorAll("input");
+  if(i[1].value)document.getElementById("ws-plan1").value=i[1].value;
+}
+function ckHtml(gIdx){
+  const state=wsChecked()[gIdx];
+  return '<div class="cklist">'+WS_GROUPS[gIdx].items.map((it,ii)=>`<div class="ck">${state[ii]?"☑ <b>"+esc(it)+"</b>":"□ "+esc(it)}</div>`).join("")+"</div>";
+}
+function memberCount(r){
+  const names=(r.members||"").split(/[、,，\s]+/).filter(x=>x);
+  const set=new Set(names);if(r.facilitator)set.add(r.facilitator);
+  return set.size;
+}
+function buildWSDoc(){
+  const r=collect();
+  const d=(r.date||"").split("-");
+  const dateStr=d.length===3?`${d[0]}年${Number(d[1])}月${Number(d[2])}日`:r.date;
+  const membersAll=[r.facilitator,r.members].filter(Boolean).join("、");
+  const h=`
+  <div class="wsheet">
+    <h3>認知症チームケア推進加算　ワークシート</h3>
+    <table><tr>
+      <th style="width:8%">氏名</th><td style="width:20%">${esc(r.user)}</td>
+      <th style="width:8%">年齢</th><td style="width:8%">${esc(gv("f-age"))} 歳</td>
+      <th style="width:8%">性別</th><td style="width:10%">${esc(gv("f-sex"))}</td>
+      <th style="width:8%">開催日</th><td style="width:14%">${esc(dateStr)}</td>
+      <th style="width:10%">検討メンバー</th><td>計 ${memberCount(r)} 名<br><span style="font-size:10px">${esc(membersAll)}</span></td>
+    </tr></table>
+
+    <div class="sec">1　その人らしい暮らしの把握</div>
+    <table>
+      <tr><th style="width:8%">No.</th><th style="width:42%">ニーズを表すような本人の声（＊チェックリストを用いたインタビュー）</th><th>本人のニーズが表れているような普段の言動や行動</th></tr>
+      <tr><td>${esc(gv("ws-no"))}</td><td>${esc(gv("ws-voice"))}</td><td>${esc(gv("ws-behavior"))}</td></tr>
+    </table>
+
+    <div class="sec">2　BPSDと背景要因の分析　　（BPSDの背景要因として検討すべき項目に ☑）</div>
+    <table>
+      <tr><th style="width:24%">着目したBPSD（BPSD評価尺度）</th><td style="width:36%">${esc(r.syms.join("、"))}</td>
+          <th style="width:16%">BPSD25Q<br>重症度合計点</th><td>初回評価：${esc(gv("ws-q25a"))}　／　取組後評価：${esc(gv("ws-q25b"))}</td></tr>
+      <tr><th>具体的な言動や行動</th><td colspan="3">${esc(r.facts[0])}</td></tr>
+    </table>
+    <table>
+      <tr><th style="width:50%">健康状態・身体的ニーズ</th><th>その他の要因（活動・参加・個人要因など）</th></tr>
+      <tr><td>${ckHtml(0)}</td><td>${ckHtml(2)}</td></tr>
+      <tr><th>薬剤情報</th><th>環境</th></tr>
+      <tr><td>${ckHtml(1)}</td><td>${ckHtml(3)}</td></tr>
+      <tr><td colspan="2">（　${esc(gv("ws-other"))}　）</td></tr>
+    </table>
+    <table>
+      <tr><th style="width:24%">BPSDが出現しやすい場面</th><td>${esc(gv("ws-scene")||r.facts[1])}</td></tr>
+      <tr><th>着目したBPSDの背景要因</th><td>${esc(gv("ws-haikei"))}</td></tr>
+      <tr><th>特記事項</th><td>本人の心の声（SOS）：${esc(r.sos)}<br>せん妄サイン：${(r.delirium||[]).some(x=>x)?"あり（医療連携）":"なし"}／症状の性質：${[r.triage.brain?"脳病変起因":null,r.triage.inter?"相互作用":null].filter(Boolean).join("＋")||"-"}</td></tr>
+    </table>
+
+    <div class="sec">3　その人らしい暮らしの実現プラン</div>
+    <table>
+      <tr><th style="width:24%">具体的なケア計画<br>（1つに絞る）</th><td>${esc(gv("ws-plan1"))}</td></tr>
+      <tr><th>${esc(gv("ws-weeks")||"　")} 週間後に目指す本人の姿<br>（1と2から考える）</th><td>${esc(gv("ws-goal"))}</td></tr>
+      <tr><th>ケア計画実施に関連して<br>本人ができること</th><td>${esc(gv("ws-can"))}</td></tr>
+      <tr><th>ケア計画実施に関連して<br>本人ができないこと</th><td>${esc(gv("ws-cannot"))}</td></tr>
+      <tr><th>実行体制（誰が・何を・いつまでに）</th><td>${r.plans.map(p=>esc(`${p.who}が「${p.what}」を${p.when}までに`)).join("<br>")}</td></tr>
+      <tr><th>次の評価時期</th><td>${esc(r.review)}</td></tr>
+    </table>
+  </div>`;
+  document.getElementById("wsdoc").innerHTML=h;
+}
+function showWS(){buildWSDoc();document.body.classList.add("wsmode");document.getElementById("wsview").style.display="block";window.scrollTo(0,0);}
+function hideWS(){document.body.classList.remove("wsmode");document.getElementById("wsview").style.display="none";}
+
+/* ============ 記録ビュー ============ */
+function openRec(){
+  document.body.classList.remove("learnmode");
+  document.getElementById("learnview").style.display="none";
+  document.body.classList.add("recmode");
+  document.getElementById("recview").style.display="block";
+  window.scrollTo(0,0);
+  showRecords();
+}
+function hideRec(){
+  document.body.classList.remove("recmode");
+  document.getElementById("recview").style.display="none";
+  window.scrollTo(0,0);
+}
+
+/* ============ 学習ビュー ============ */
+let learnReturnPh=0;
+function openLearn(sec){
+  learnReturnPh=cur;
+  document.body.classList.remove("recmode");
+  document.getElementById("recview").style.display="none";
+  document.body.classList.add("learnmode");
+  document.getElementById("learnview").style.display="block";
+  setTimeout(()=>jumpLearn(sec),50);
+}
+function jumpLearn(sec){
+  const el=document.getElementById(sec);
+  if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function hideLearn(){
+  document.body.classList.remove("learnmode");
+  document.getElementById("learnview").style.display="none";
+  window.scrollTo(0,0);
+}
+
+/* ============ モニター表示モード ============ */
+function applyBig(on){
+  document.body.classList.toggle("bigmode",on);
+  const b=document.getElementById("bigbtn");
+  if(b){b.textContent=on?"標準表示":"モニター";b.style.background=on?"#FFD9A0":"rgba(255,255,255,.22)";b.style.color=on?"#1F4A36":"#fff";}
+  try{localStorage.setItem("jirei-bigmode",on?"1":"0");}catch(e){}
+}
+function toggleBig(){applyBig(!document.body.classList.contains("bigmode"));}
+try{if(localStorage.getItem("jirei-bigmode")==="1")applyBig(true);}catch(e){}
+
+/* ============ 下書きの自動保存・復元 ============ */
+const DRAFT_KEY="jirei-kento-draft";
+let draftTimer=null;
+function saveDraft(){
+  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(collect())); }catch(e){}
+}
+function queueDraft(){ clearTimeout(draftTimer); draftTimer=setTimeout(saveDraft,600); }
+document.addEventListener("input", queueDraft);
+document.addEventListener("click", queueDraft);
+function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} }
+
+function restoreDraft(d){
+  const sv=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined&&v!==null)el.value=v;};
+  sv("f-date",d.date);setFloor(d.floor);sv("f-user",d.user);
+  sv("f-facilitator",d.facilitator);sv("f-members",d.members);
+  if(d.prevReview){ sv("f-prevmemo",d.prevReview.memo);
+    prevStatusSel=d.prevReview.status||"";
+    [...document.querySelectorAll("#prevstatus .chip")].forEach(x=>x.classList.toggle("on",x.textContent===prevStatusSel));
+    setTimeout(findPrev,300); }
+  (d.facts||[]).forEach((v,i)=>sv("f-fact"+(i+1),v));
+  sv("f-sos",d.sos);sv("f-review",d.review);
+  if(d.ws){
+    sv("f-age",d.ws.age);sv("f-sex",d.ws.sex);sv("ws-no",d.ws.no);sv("ws-voice",d.ws.voice);
+    sv("ws-behavior",d.ws.behavior);sv("ws-q25a",d.ws.q25a);sv("ws-q25b",d.ws.q25b);
+    sv("ws-other",d.ws.other);sv("ws-scene",d.ws.scene);sv("ws-haikei",d.ws.haikei);
+    sv("ws-plan1",d.ws.plan1);sv("ws-weeks",d.ws.weeks);sv("ws-goal",d.ws.goal);
+    sv("ws-can",d.ws.can);sv("ws-cannot",d.ws.cannot);
+    if(Array.isArray(d.ws.checks)){
+      document.querySelectorAll("[data-ws]").forEach(c=>{
+        const[a,b]=c.dataset.ws.split("-").map(Number);
+        c.classList.toggle("on", !!(d.ws.checks[a]&&d.ws.checks[a][b]));
+      });
+    }
+  }
+  /* 症状の選択 */
+  selCats=new Set(d.cats||[]); selSyms=new Set(d.syms||[]);
+  document.querySelectorAll("#catbtns button").forEach(b=>b.classList.toggle("on",selCats.has(b.textContent)));
+  renderChips();
+  /* せん妄・身体 */
+  (d.delirium||[]).forEach((v,i)=>{const c=document.querySelector(`[data-del="${i}"]`);if(c)c.checked=!!v;});
+  (d.body||[]).forEach((v,i)=>{const c=document.querySelector(`[data-body="${i}"]`);if(c)c.checked=!!v;});
+  const dc=document.querySelector("[data-del]");if(dc)dc.dispatchEvent(new Event("change"));
+  const bc=document.querySelector("[data-body]");if(bc)bc.dispatchEvent(new Event("change"));
+  /* 8因子 */
+  (d.factors||[]).forEach((f,fi)=>{
+    (f.checks||[]).forEach((v,ci)=>{const c=document.querySelector(`input[data-f="${fi}"][data-c="${ci}"]`);if(c)c.checked=!!v;});
+    const first=document.querySelector(`input[data-f="${fi}"]`);if(first)first.dispatchEvent(new Event("change"));
+    const nt=document.querySelector(`textarea[data-note="${fi}"]`);if(nt&&f.note!==undefined)nt.value=f.note;
+  });
+  /* 採用した標準対応 */
+  pickedResps=[...(d.picked||[])];
+  document.querySelectorAll(".resp li").forEach(li=>{
+    const fi=li.dataset.f;
+    const txt=`【${FACTORS[fi].t}】${li.textContent}`;
+    li.classList.toggle("sel",pickedResps.includes(txt));
+  });
+  renderPicked();
+  /* 仕分け */
+  if(d.triage){
+    document.getElementById("tri-brain").checked=!!d.triage.brain;
+    document.getElementById("tri-inter").checked=!!d.triage.inter;
+    document.getElementById("tri-brain").dispatchEvent(new Event("change"));
+    document.getElementById("tri-inter").dispatchEvent(new Event("change"));
+  }
+  /* 計画 */
+  document.getElementById("planrows").innerHTML="";
+  const plans=(d.plans&&d.plans.length)?d.plans:[{who:"",what:"",when:""}];
+  plans.forEach(pl=>addPlanRow(pl.who||"",pl.what||"",pl.when||""));
+}
+(function(){
+  try{
+    const raw=localStorage.getItem(DRAFT_KEY);
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    const hasContent=d && (d.user||d.sos||(d.syms&&d.syms.length)||(d.facts&&d.facts.some(x=>x)));
+    if(!hasContent){clearDraft();return;}
+    if(confirm(`入力途中のデータがあります（利用者：${d.user||"未入力"}）。\n続きから再開しますか？\n※「キャンセル」で下書きを破棄して新規に始めます`)){
+      setTimeout(()=>restoreDraft(d),100);
+    }else{
+      clearDraft();
+    }
+  }catch(e){}
+})();
+
+initCloud().then(()=>{ ensureAll().then(()=>{
+  try{
+    const c=sessionStorage.getItem("jirei-continue");
+    if(c){ const d=JSON.parse(c); sessionStorage.removeItem("jirei-continue");
+      document.getElementById("f-user").value=d.user||"";
+      setFloor(d.floor||"");
+      if(d.age)document.getElementById("f-age").value=d.age;
+      if(d.sex)document.getElementById("f-sex").value=d.sex;
+      findPrev();
+      alert("前回の記録を引き継ぎました。\n最初に『前回の検討のふり返り』を入力してから進めてください。");
+    }
+  }catch(e){}
+}); });
+go(0);
+</script>
+</body>
+</html>
