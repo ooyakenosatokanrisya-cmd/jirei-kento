@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>認知症ケア フロアラウンドチェックシート</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+  :root {
+    --bg:#f5f3ef; --surface:#fff; --surface2:#faf9f7; --border:#d9d4cc; --border-light:#ede9e3;
+    --text:#2a2520; --text-muted:#7a7068; --accent:#3d5a4e; --accent-light:#e8f0ed; --accent2:#8b6f47;
+    --good:#2e6b4f; --good-bg:#e6f4ee; --partial:#b07d2b; --partial-bg:#fdf3e0;
+    --bad:#b83232; --bad-bg:#fdeaea; --na:#5a6e7a; --na-bg:#e8edf0;
+    --shadow:0 2px 12px rgba(42,37,32,0.08); --shadow-lg:0 8px 32px rgba(42,37,32,0.12); --radius:10px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; line-height:1.6; }
+  .tab-nav { display:flex; background:var(--accent); position:sticky; top:0; z-index:100; box-shadow:0 2px 16px rgba(0,0,0,0.15); }
+  .tab-btn { flex:1; padding:14px 8px; background:transparent; border:none; color:rgba(255,255,255,0.6); font-family:'Noto Sans JP',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; border-bottom:3px solid transparent; letter-spacing:0.04em; }
+  .tab-btn.active { color:#fff; border-bottom-color:#fff; background:rgba(255,255,255,0.08); }
+  .tab-btn:hover:not(.active) { color:rgba(255,255,255,0.85); }
+  .app-header { background:var(--accent); color:#fff; padding:16px 24px 18px; }
+  .app-header h1 { font-family:'Noto Serif JP',serif; font-size:16px; font-weight:700; letter-spacing:0.05em; margin-bottom:14px; }
+  .app-header h1 span { font-size:11px; font-weight:300; opacity:0.8; margin-left:6px; font-family:'Noto Sans JP',sans-serif; display:inline-block; }
+  .meta-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .meta-field { display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .meta-field label { font-size:10px; opacity:0.75; letter-spacing:0.08em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .meta-field input, .meta-field select { box-sizing:border-box; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); border-radius:6px; color:#fff; padding:7px 10px; font-size:13px; font-family:'Noto Sans JP',sans-serif; outline:none; transition:background 0.2s; width:100%; min-width:0; max-width:100%; }
+  .meta-field input[type=date] { -webkit-appearance:none; appearance:none; min-height:36px; }
+  @media (max-width:600px){ .meta-row { grid-template-columns:1fr; } }
+  .meta-field input::placeholder { color:rgba(255,255,255,0.5); }
+  .meta-field input:focus, .meta-field select:focus { background:rgba(255,255,255,0.25); }
+  .legend { display:flex; gap:10px; padding:10px 24px; background:var(--surface2); border-bottom:1px solid var(--border-light); flex-wrap:wrap; }
+  .legend-item { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--text-muted); }
+  .badge { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.15s; border:2px solid transparent; flex-shrink:0; }
+  .badge.good { background:var(--good-bg); color:var(--good); border-color:var(--good); }
+  .badge.part { background:var(--partial-bg); color:var(--partial); border-color:var(--partial); }
+  .badge.bad { background:var(--bad-bg); color:var(--bad); border-color:var(--bad); }
+  .badge.na { background:var(--na-bg); color:var(--na); border-color:var(--na); }
+  .badge.inactive { background:var(--border-light); color:var(--text-muted); border-color:var(--border); opacity:0.5; }
+  .progress-bar-wrap { padding:10px 24px; background:var(--surface2); border-bottom:1px solid var(--border-light); display:flex; align-items:center; gap:12px; }
+  .progress-bar-track { flex:1; height:6px; background:var(--border-light); border-radius:99px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:var(--accent); border-radius:99px; transition:width 0.4s ease; }
+  .progress-label { font-size:12px; color:var(--text-muted); white-space:nowrap; }
+  .main { padding:20px 24px; max-width:940px; margin:0 auto; }
+  .page { display:none; }
+  .page.active { display:block; }
+  .category { margin-bottom:20px; background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; border:1px solid var(--border-light); }
+  .category-header { background:var(--accent); color:#fff; padding:10px 18px; font-size:13px; font-weight:700; letter-spacing:0.06em; display:flex; align-items:center; gap:8px; }
+  .category-header .cat-icon { font-size:16px; }
+  .cat-count { margin-left:auto; font-size:11px; opacity:0.8; }
+  .check-item { border-bottom:1px solid var(--border-light); transition:background 0.15s; }
+  .check-item:last-child { border-bottom:none; }
+  .check-item.evaluated { background:var(--surface2); }
+  .check-main { padding:12px 18px; display:grid; grid-template-columns:28px 1fr auto; gap:10px; align-items:start; }
+  .check-num { width:28px; height:28px; border-radius:50%; background:var(--accent-light); color:var(--accent); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .check-text { font-size:14px; font-weight:500; line-height:1.5; }
+  .rating-group { display:flex; gap:5px; flex-shrink:0; margin-top:1px; }
+  .criteria-toggle { display:flex; align-items:center; gap:6px; padding:4px 18px 10px 56px; font-size:11px; color:var(--accent2); cursor:pointer; user-select:none; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:2px; width:fit-content; }
+  .criteria-toggle:hover { color:var(--accent); }
+  .criteria-box { display:none; margin:0 18px 12px 56px; padding:12px 14px; background:var(--surface2); border-left:3px solid var(--accent2); border-radius:0 6px 6px 0; font-size:12px; color:var(--text-muted); line-height:1.8; }
+  .criteria-box.open { display:block; }
+  .crit-lead { font-size:11.5px; font-weight:700; color:var(--text); margin-bottom:6px; }
+  .crit-opt { display:flex; gap:8px; align-items:flex-start; padding:7px 8px; border:1.5px solid var(--border-light); border-radius:7px; background:#fff; margin-bottom:5px; cursor:pointer; font-size:12.5px; color:var(--text); line-height:1.65; }
+  .crit-opt input { margin-top:3px; width:17px; height:17px; flex:none; accent-color:var(--bad); }
+  .crit-opt.none input { accent-color:var(--good); }
+  .crit-opt.on { background:var(--bad-bg); border-color:var(--bad); }
+  .crit-opt.none.on { background:var(--good-bg); border-color:var(--good); }
+  .crit-star { color:var(--bad); font-weight:700; }
+  .crit-judge { margin-top:8px; padding:8px 10px; border-radius:7px; font-size:12.5px; font-weight:700; background:var(--surface2); color:var(--text-muted); }
+  .crit-judge.good { background:var(--good-bg); color:var(--good); }
+  .crit-judge.part { background:var(--partial-bg); color:var(--partial); }
+  .crit-judge.bad { background:var(--bad-bg); color:var(--bad); }
+  .rule-card { background:var(--surface); border:1px solid var(--border-light); border-radius:var(--radius); padding:14px 16px; margin-bottom:14px; box-shadow:var(--shadow); }
+  .rule-card h3 { font-size:13.5px; color:var(--accent); margin-bottom:8px; }
+  .rule-table { width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:8px; }
+  .rule-table th, .rule-table td { border:1px solid var(--border-light); padding:6px 8px; text-align:left; vertical-align:middle; }
+  .rule-table th { background:var(--surface2); white-space:nowrap; }
+  .rule-table .mk { font-size:15px; font-weight:700; text-align:center; width:38px; }
+  .rule-table .pt { text-align:center; white-space:nowrap; font-weight:700; }
+  .rule-note { font-size:11.5px; color:var(--text-muted); line-height:1.7; }
+  .score-line { font-size:12px; color:var(--text-muted); margin-top:4px; }
+  .criteria-box ul { padding-left:0; list-style:none; }
+  .criteria-box li::before { content:"・"; color:var(--accent2); }
+  .comment-wrap { padding:0 18px 12px 56px; }
+  .comment-wrap textarea { width:100%; min-height:52px; border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-family:'Noto Sans JP',sans-serif; font-size:12px; color:var(--text); background:var(--surface); resize:vertical; outline:none; transition:border-color 0.2s; }
+  .comment-wrap textarea:focus { border-color:var(--accent); }
+  .summary-section { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; border:1px solid var(--border-light); margin-bottom:20px; }
+  .summary-header { background:var(--accent2); color:#fff; padding:10px 18px; font-size:13px; font-weight:700; letter-spacing:0.06em; }
+  .summary-body { padding:16px 18px; display:flex; flex-direction:column; gap:14px; }
+  .summary-field label { display:block; font-size:12px; font-weight:700; color:var(--accent); margin-bottom:5px; letter-spacing:0.04em; }
+  .summary-field textarea { width:100%; min-height:72px; border:1px solid var(--border); border-radius:6px; padding:8px 10px; font-family:'Noto Sans JP',sans-serif; font-size:13px; color:var(--text); background:var(--surface); resize:vertical; outline:none; transition:border-color 0.2s; line-height:1.7; }
+  .summary-field textarea:focus { border-color:var(--accent2); }
+  .action-bar { display:flex; gap:10px; justify-content:center; padding:0 0 32px; flex-wrap:wrap; }
+  .btn { padding:12px 24px; border-radius:8px; font-size:14px; font-weight:700; font-family:'Noto Sans JP',sans-serif; cursor:pointer; border:none; transition:all 0.2s; letter-spacing:0.04em; }
+  .btn-primary { background:var(--accent); color:#fff; box-shadow:0 4px 12px rgba(61,90,78,0.3); }
+  .btn-primary:hover { background:#2e4a3f; transform:translateY(-1px); }
+  .btn-secondary { background:var(--surface); color:var(--accent); border:2px solid var(--accent); }
+  .btn-secondary:hover { background:var(--accent-light); }
+  .btn-danger { background:var(--surface); color:var(--bad); border:2px solid var(--bad); }
+  .btn-danger:hover { background:var(--bad-bg); }
+  .btn-sm { padding:7px 14px; font-size:12px; }
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:16px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--surface); border-radius:14px; padding:28px; max-width:480px; width:100%; box-shadow:var(--shadow-lg); max-height:90vh; overflow-y:auto; }
+  .modal h2 { font-size:16px; margin-bottom:12px; color:var(--accent); font-family:'Noto Serif JP',serif; }
+  .modal p { font-size:13px; color:var(--text-muted); margin-bottom:20px; line-height:1.7; white-space:pre-line; }
+  .modal-btn-row { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+  .result-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .result-card { border-radius:8px; padding:12px 14px; text-align:center; }
+  .result-card .rc-num { font-size:28px; font-weight:700; line-height:1; }
+  .result-card .rc-label { font-size:11px; margin-top:4px; opacity:0.8; }
+  .result-card.good { background:var(--good-bg); color:var(--good); }
+  .result-card.partial { background:var(--partial-bg); color:var(--partial); }
+  .result-card.bad { background:var(--bad-bg); color:var(--bad); }
+  .result-card.na { background:var(--na-bg); color:var(--na); }
+  .section-title { font-family:'Noto Serif JP',serif; font-size:18px; font-weight:700; color:var(--accent); margin-bottom:6px; }
+  .section-desc { font-size:12px; color:var(--text-muted); margin-bottom:18px; }
+  .filter-bar { display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center; background:var(--surface); padding:12px 16px; border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border-light); }
+  .filter-bar label { font-size:12px; color:var(--text-muted); font-weight:600; }
+  .filter-bar select, .filter-bar input { padding:7px 12px; border:1px solid var(--border); border-radius:6px; font-family:'Noto Sans JP',sans-serif; font-size:13px; background:var(--surface); color:var(--text); outline:none; }
+  .history-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border-light); margin-bottom:12px; overflow:hidden; }
+  .history-card-head { padding:12px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border-light); flex-wrap:wrap; cursor:pointer; }
+  .hc-floor { font-weight:700; color:var(--accent); font-size:14px; }
+  .hc-date { font-size:12px; color:var(--text-muted); }
+  .hc-staff { font-size:12px; color:var(--text-muted); }
+  .hc-mini-stats { margin-left:auto; display:flex; gap:8px; }
+  .mini-stat { display:flex; align-items:center; gap:3px; font-size:12px; font-weight:700; }
+  .mini-stat.good { color:var(--good); }
+  .mini-stat.part { color:var(--partial); }
+  .mini-stat.bad { color:var(--bad); }
+  .hc-actions { display:flex; gap:6px; width:100%; margin-top:4px; flex-wrap:wrap; }
+  .history-detail { display:none; padding:14px 16px; background:var(--surface2); }
+  .history-detail.open { display:block; }
+  .hd-item { padding:6px 0; border-bottom:1px solid var(--border-light); font-size:12px; display:flex; gap:8px; align-items:flex-start; }
+  .hd-item:last-child { border-bottom:none; }
+  .hd-rating { font-weight:700; flex-shrink:0; width:20px; text-align:center; }
+  .hd-rating.good { color:var(--good); }
+  .hd-rating.part { color:var(--partial); }
+  .hd-rating.bad { color:var(--bad); }
+  .hd-rating.na { color:var(--na); }
+  .hd-comment { color:var(--text-muted); font-size:11px; margin-left:4px; }
+  .hd-summary { margin-top:10px; padding-top:10px; border-top:2px solid var(--border-light); }
+  .hd-summary div { font-size:12px; margin-bottom:6px; }
+  .hd-summary strong { color:var(--accent); }
+  .empty-state { text-align:center; padding:50px 20px; color:var(--text-muted); }
+  .empty-state .es-icon { font-size:40px; margin-bottom:12px; opacity:0.4; }
+  .compare-table-wrap { overflow-x:auto; background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border-light); }
+  table.compare { width:100%; border-collapse:collapse; font-size:12px; min-width:600px; }
+  table.compare th, table.compare td { padding:8px 10px; text-align:center; border:1px solid var(--border-light); }
+  table.compare th { background:var(--accent); color:#fff; font-weight:700; position:sticky; top:0; }
+  table.compare th.item-col, table.compare td.item-col { text-align:left; font-weight:500; background:var(--surface2); min-width:200px; position:sticky; left:0; }
+  table.compare td.cell-good { background:var(--good-bg); color:var(--good); font-weight:700; }
+  table.compare td.cell-part { background:var(--partial-bg); color:var(--partial); font-weight:700; }
+  table.compare td.cell-bad { background:var(--bad-bg); color:var(--bad); font-weight:700; }
+  table.compare td.cell-na { background:var(--na-bg); color:var(--na); }
+  table.compare tr.score-row td { font-weight:700; background:var(--accent-light); }
+  .compare-pick { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border-light); padding:16px; margin-bottom:18px; }
+  .compare-pick h3 { font-size:13px; color:var(--accent); margin-bottom:10px; }
+  .pick-list { display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto; }
+  .pick-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border:1px solid var(--border-light); border-radius:6px; cursor:pointer; transition:background 0.15s; }
+  .pick-item:hover { background:var(--surface2); }
+  .pick-item.selected { background:var(--accent-light); border-color:var(--accent); }
+  .pick-item input { width:16px; height:16px; accent-color:var(--accent); }
+  .pick-label { font-size:13px; }
+  .pick-label .pl-floor { font-weight:700; color:var(--accent); }
+  .pick-label .pl-date { color:var(--text-muted); font-size:11px; margin-left:6px; }
+  .trend-note { font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.7; }
+  @media print {
+    .tab-nav, .criteria-toggle, .action-bar, .filter-bar, .hc-actions, .compare-pick { display:none; }
+    .criteria-box { display:block !important; }
+    body { background:#fff; }
+    .category, .summary-section { box-shadow:none; border:1px solid #ccc; break-inside:avoid; }
+  }
+  /* 印刷用シート */
+  #print-area { display:none; }
+  @media print {
+    body.printing > *:not(#print-area) { display:none !important; }
+    body.printing #print-area { display:block !important; }
+    #print-area { padding:0; color:#000; }
+    .psheet { page-break-after:always; }
+    .psheet:last-child { page-break-after:auto; }
+    .p-h1 { font-size:20px; font-weight:bold; text-align:center; margin-bottom:4px; }
+    .p-sub { font-size:12px; text-align:center; color:#555; margin-bottom:14px; }
+    .p-meta { width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px; }
+    .p-meta td { border:1px solid #999; padding:5px 8px; }
+    .p-meta td.lbl { background:#eee; font-weight:bold; width:90px; white-space:nowrap; }
+    .p-sec { font-size:13px; font-weight:bold; background:#3d5a4e; color:#fff; padding:4px 8px; margin:12px 0 6px; }
+    .p-tbl { width:100%; border-collapse:collapse; font-size:11px; }
+    .p-tbl th, .p-tbl td { border:1px solid #999; padding:4px 6px; text-align:left; vertical-align:top; }
+    .p-tbl th { background:#eee; }
+    .p-tbl td.rt { text-align:center; font-weight:bold; width:34px; }
+    .p-rt-good { color:#2e6b4f; } .p-rt-part { color:#b07d2b; } .p-rt-bad { color:#b83232; } .p-rt-na { color:#5a6e7a; }
+    .p-note { font-size:11px; margin:3px 0; }
+    .p-note b { display:inline-block; min-width:80px; }
+    .p-foot { font-size:10px; color:#777; text-align:right; margin-top:16px; }
+    .p-list-tbl { width:100%; border-collapse:collapse; font-size:10px; }
+    .p-list-tbl th, .p-list-tbl td { border:1px solid #999; padding:3px 4px; text-align:center; }
+    .p-list-tbl th { background:#3d5a4e; color:#fff; }
+    .p-list-tbl td.floor { text-align:left; font-weight:bold; white-space:nowrap; }
+  }
+</style>
+</head>
+<body>
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="check" onclick="switchTab('check')">📋 チェック入力</button>
+  <button class="tab-btn" data-tab="history" onclick="switchTab('history')">📚 過去データ</button>
+  <button class="tab-btn" data-tab="compare" onclick="switchTab('compare')">📊 比較</button>
+</nav>
+
+<div class="page active" id="page-check">
+  <header class="app-header">
+    <h1>認知症ケア　フロアラウンドチェックシート
+      <span id="sync-stat" style="font-size:10px;font-weight:700;background:rgba(255,255,255,0.12);border-radius:999px;padding:2px 10px;margin-left:8px;vertical-align:middle">ローカル保存</span>
+    </h1>
+    <div class="meta-row">
+      <div class="meta-field"><label>実施日</label><input type="date" id="meta-date"></div>
+      <div class="meta-field"><label>フロア</label><select id="meta-floor"><option value="">選択してください</option><option value="本館2階">本館2階</option><option value="本館3階">本館3階</option><option value="本館4階">本館4階</option><option value="新館2階">新館2階</option><option value="新館3階">新館3階</option><option value="デイケア">デイケア</option><option value="ヘルパー">ヘルパー</option><option value="居宅介護">居宅介護</option></select></div>
+      <div class="meta-field"><label>実施者（認知症実践指導者）</label><input type="text" id="meta-staff" placeholder="氏名を入力"></div>
+    </div>
+    <div class="meta-row" style="margin-top:8px;grid-template-columns:1fr;">
+      <div class="meta-field"><label>対象区分（ラウンドの対象は次のいずれか）</label>
+        <select id="meta-targettype">
+          <option value="">選択してください</option>
+          <option value="① 前頭側頭型認知症の方">① 前頭側頭型認知症の方</option>
+          <option value="② 症状のある方（BPSDがみられる方）">② 症状のある方（BPSDがみられる方）</option>
+          <option value="①② 両方">①② 両方</option>
+        </select></div>
+      <div class="meta-field"><label>対象利用者（イニシャル等。上の区分に当てはまる方）</label><input type="text" id="meta-target" placeholder="例：A様（前頭側頭型）・B様（帰宅要求）"></div>
+    </div>
+  </header>
+  <div class="legend">
+    <span style="font-size:12px;color:var(--text-muted);font-weight:600;margin-right:4px;">評価：</span>
+    <div class="legend-item"><span class="badge good">○</span> できている <b>2点</b></div>
+    <div class="legend-item"><span class="badge part">△</span> 一部できている <b>1点</b></div>
+    <div class="legend-item"><span class="badge bad">×</span> できていない <b>0点</b></div>
+    <div class="legend-item"><span class="badge na">－</span> 該当なし・観察せず <b>点数に入れない</b></div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="prog-label">0 / 10 項目評価済み</div>
+  </div>
+  <div class="main">
+    <div class="rule-card" style="border-left:5px solid var(--accent2)">
+      <h3>ラウンドの対象者（だれを見るか）</h3>
+      <p class="rule-note" style="margin-bottom:8px">ラウンドは、フロア全体をなんとなく見るのではなく、<b>次のいずれかに当てはまる方のケア場面</b>を観察します。対象がはっきりしていることで、観察の目のつけどころが指導者によってぶれなくなります。</p>
+      <table class="rule-table">
+        <tr><th style="width:60px">区分</th><th>対象</th><th>観察でとくに見るところ</th></tr>
+        <tr><td class="pt">①</td><td><b>前頭側頭型認知症の方</b></td><td>感情のコントロールがむずかしく、指示・命令と受け取られる言葉かけが引き金になりやすい。<b>声のかけ方・本人のペース</b>を重点的に見ます。</td></tr>
+        <tr><td class="pt">②</td><td><b>症状のある方</b><br>（BPSDがみられる方）</td><td>気になる行動は本人からのSOSです。<b>その行動が出る場面</b>を選んで観察し、背景（からだ・環境・かかわり方）を確かめます。</td></tr>
+      </table>
+      <p class="rule-note">対象の方が複数いる場合は、<b>いま最も対応に困っている方を1人</b>選び、その方が関わる場面を観察します。<br>
+      観察して気づいた背景要因は、月1回の<b>事例検討</b>につなげます（急な変化があれば、事例検討より先に看護師・医師へ報告）。</p>
+    </div>
+    <div class="rule-card">
+      <h3>判定のしかた（だれが観ても同じ判定になるように）</h3>
+      <p class="rule-note" style="margin-bottom:8px">各項目の「▶ 判定の基準を開く」をタップし、<b>実際に観察された場面にチェック</b>を入れてください。チェックした数で判定が自動で決まります。指導者の印象では判定しません。</p>
+      <table class="rule-table">
+        <tr><th>判定</th><th>点</th><th>チェックした数</th><th>考え方</th></tr>
+        <tr><td class="mk" style="color:var(--good)">○</td><td class="pt" style="color:var(--good)">2点</td><td>0個（「気になる場面はなかった」を選択）</td><td>基準どおりできている</td></tr>
+        <tr><td class="mk" style="color:var(--partial)">△</td><td class="pt" style="color:var(--partial)">1点</td><td>1個</td><td>おおむねできているが、改善の余地が1つある</td></tr>
+        <tr><td class="mk" style="color:var(--bad)">×</td><td class="pt" style="color:var(--bad)">0点</td><td>2個以上<br>または <span class="crit-star">★</span> が1個以上</td><td>しくみとして改善が必要</td></tr>
+        <tr><td class="mk" style="color:var(--na)">－</td><td class="pt" style="color:var(--na)">—</td><td>その場面が発生しなかった</td><td>点数に入れない（分母から除く）</td></tr>
+      </table>
+      <p class="rule-note"><span class="crit-star">★</span>印は、<b>安全や尊厳に直接かかわる場面</b>です。1つでも観察されたら×になります。<br>
+      迷ったときは、実際に見た場面だけにチェックします。見ていない場面は想像でチェックしません。<br>
+      点数は<b>1項目2点満点</b>。全10項目で<b>20点満点</b>です（「－」があればその分を除いて計算します）。</p>
+    </div>
+  </div>
+  <div class="main" id="check-content"></div>
+</div>
+
+<div class="page" id="page-history">
+  <div class="main">
+    <div class="section-title">📚 過去のラウンド記録</div>
+    <div class="section-desc">保存したラウンド記録をフロア別・期間別に確認できます。カードをタップすると詳細が開きます。</div>
+    <div class="filter-bar">
+      <label>フロア：</label>
+      <select id="hist-floor-filter" onchange="renderHistory()"><option value="">すべて</option></select>
+      <label>並び順：</label>
+      <select id="hist-sort" onchange="renderHistory()"><option value="date-desc">新しい順</option><option value="date-asc">古い順</option></select>
+      <button class="btn btn-secondary btn-sm" onclick="cloudSync().then(()=>notice('最新の状態にしました','共有データベースから記録を読み込みました。'))">🔄 共有データを再読込</button>
+      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('import-file').click()">📥 ファイル読込</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      <button class="btn btn-secondary btn-sm" onclick="exportAll()">📤 全データ書出</button>
+      <button class="btn btn-primary btn-sm" onclick="printList()">🖨️ 一覧を印刷</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<div class="page" id="page-compare">
+  <div class="main">
+    <div class="section-title">📊 記録の比較</div>
+    <div class="section-desc">比較したい記録を2件以上選ぶと、項目ごとの評価が並べて表示されます。フロア間・期間の推移の確認に使えます。</div>
+    <div class="compare-pick"><h3>比較する記録を選択（2件以上）</h3><div class="pick-list" id="compare-pick-list"></div></div>
+    <div id="compare-result"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="result-modal"><div class="modal">
+  <h2>📊 評価結果サマリー</h2>
+  <div class="result-grid" id="result-grid"></div>
+  <p id="result-msg"></p>
+  <div class="modal-btn-row">
+    <button class="btn btn-secondary btn-sm" onclick="closeModal('result-modal')">閉じる</button>
+    <button class="btn btn-primary btn-sm" onclick="saveRecord()">💾 この記録を保存</button>
+  </div>
+</div></div>
+
+<div class="modal-overlay" id="reset-modal"><div class="modal">
+  <h2>⚠️ 入力クリア確認</h2>
+  <p>現在入力中の評価・コメントをクリアします。保存済みの過去データは消えません。よろしいですか？</p>
+  <div class="modal-btn-row">
+    <button class="btn btn-secondary btn-sm" onclick="closeModal('reset-modal')">キャンセル</button>
+    <button class="btn btn-danger btn-sm" onclick="doReset()">クリアする</button>
+  </div>
+</div></div>
+
+<div class="modal-overlay" id="notice-modal"><div class="modal">
+  <h2 id="notice-title"></h2><p id="notice-msg"></p>
+  <div class="modal-btn-row"><button class="btn btn-primary btn-sm" onclick="closeModal('notice-modal')">OK</button></div>
+</div></div>
+
+<div class="modal-overlay" id="delete-modal"><div class="modal">
+  <h2>🗑️ 記録の削除</h2><p id="delete-msg"></p>
+  <div class="modal-btn-row">
+    <button class="btn btn-secondary btn-sm" onclick="closeModal('delete-modal')">キャンセル</button>
+    <button class="btn btn-danger btn-sm" onclick="confirmDelete()">削除する</button>
+  </div>
+</div></div>
+
+<div id="print-area"></div>
+
+<script>
+const DATA = { categories: [
+  { id:"toileting", name:"排泄ケア", icon:"🚻", items:[
+    { no:1, title:"トイレ誘導のタイミングは合っているか", criteria:["ソワソワ動き回る／立ち上がろうとする／股間や下腹部を手で押さえる／ズボンを引っ張るなどのサインが出ているのにスタッフが気づいていない","時間だけで機械的に誘導し、本人のリズムと合っていない","失禁後に初めて気づいている場面が繰り返されている"]},
+    { no:2, title:"誘導・介助の言葉かけは適切か", criteria:["フロアや廊下で「トイレ行きますよ」と大声で呼びかけている","「行かない」と言っているのに腕を引いて連れて行く","トイレ内で「早くして」と急かす","失禁時に「またですか」「なんで汚すの」などの言葉が出る","介助中に他スタッフと雑談しながら対応している"]},
+    { no:3, title:"おむつ・パッドの状態は適切か", criteria:["外側から触れてわかるほど膨らんでいる（長時間未交換）","居室やトイレ周辺にアンモニア臭がある","テープが極端に引っ張られて留まっている／緩くズレている（サイズ不適合）","皮膚のかぶれ・赤みの記録がない"]},
+    { no:4, title:"排泄の記録は実態を反映しているか", criteria:["「排泄なし」が2日以上続いているのに看護師への報告記録がない","全員が同じ時間帯に「排泄あり」と記録されている（定時記録の疑い）","量・性状・介助内容が一切書かれず「良好」だけ","便秘3日以上の記録があるのに対応の記載がない"]},
+    { no:5, title:"トイレの場所・環境は使いやすいか", criteria:["扉に「トイレ」の表示がない／文字が小さすぎる／壁と扉の色が同化している","手すりの位置が座った状態で届かない","便座が低すぎて立ち上がりにくい","床が濡れている","夜間の廊下の足元灯がトイレまでの動線をカバーしていない"]}
+  ]},
+  { id:"environment", name:"生活環境", icon:"🏠", items:[
+    { no:6, title:"転倒につながる危険はないか", criteria:["廊下・居室の床に電源コード／スリッパ／車いすフットレストが出ている","モップがけ後に床が濡れたまま放置されている","ベッドが高すぎて足が床につかない（立ち上がり時の転倒リスク）","夜間のセンサーマットの位置がベッドから足を下ろす場所とずれている"]},
+    { no:7, title:"フロアの音・光・温度は過剰でないか", criteria:["【音】誰も見ていないのにテレビが大音量でつけっぱなし／利用者が耳をふさぐ・顔をしかめる・急に大声を出す","【光】日中もカーテンが閉まったまま自然光がない／西日が利用者の顔に直接当たっている","【温度】毛布を手放さない・重ね着している＝寒すぎ／顔が赤い・汗をかく・水分を頻繁に求める＝暑すぎ"]},
+    { no:8, title:"居室に本人らしさがあるか", criteria:["入所時から一度も変わっていない殺風景な壁・棚","家族の写真・馴染みの物が一切置かれていない","好きな物が本人の手の届かない場所にしまわれている","物が多すぎて通路が塞がれている（転倒リスクと本人らしさのバランスを見る）"]},
+    { no:9, title:"トイレ・自室の場所がわかりやすいか", criteria:["トイレの扉に大きな表示がない","居室の扉に本人が認識できる目印（名前・写真・馴染みの色）がない","廊下の鏡の前で自分の姿を別人と認識して不安・混乱している利用者がいる","夜間に廊下をさまよっているという申し送りがあるのに動線上の表示が不十分"]},
+    { no:10, title:"日中の過ごし方は本人に合っているか", criteria:["1時間以上スタッフから一切声をかけられていない利用者がいる","テレビの前に車いすで並べられているだけで表情がなく視線が定まっていない","本人が嫌がっているのに集団レクリエーションに参加させられている","生活歴・ケアプランに書かれた好みと日中の過ごし方が全く結びついていない"]}
+  ]}
+]};
+const ALL_ITEMS = DATA.categories.flatMap(c => c.items);
+const TOTAL = ALL_ITEMS.length;
+const RATINGS = ["○","△","×","－"];
+/* ★＝1つでも観察されたら×とする「安全・尊厳に直接かかわる場面」 */
+const CRITICAL = {
+  1:[2], 2:[0,1,3], 3:[0], 4:[0,3], 5:[3],
+  6:[0,1], 7:[2], 8:[3], 9:[3], 10:[0,2]
+};
+const PT = { "○":2, "△":1, "×":0 };
+/* チェックした数から判定を自動で決める */
+function autoRate(no){
+  const ck = state.criteria[no];
+  if(!ck) return null;
+  if(ck.none) return "○";
+  const hits = (ck.hits||[]);
+  if(hits.length===0) return null;
+  const crit = CRITICAL[no]||[];
+  if(hits.some(i=>crit.includes(i))) return "×";
+  return hits.length===1 ? "△" : "×";
+}
+function judgeText(no){
+  const ck = state.criteria[no];
+  if(!ck) return {cls:"", text:"↑ 観察された場面にチェックすると、判定が自動で決まります"};
+  if(ck.none) return {cls:"good", text:"気になる場面なし → 判定：○（2点）"};
+  const hits=(ck.hits||[]); const crit=CRITICAL[no]||[];
+  if(hits.length===0) return {cls:"", text:"↑ 観察された場面にチェックすると、判定が自動で決まります"};
+  const hasC = hits.some(i=>crit.includes(i));
+  if(hasC) return {cls:"bad", text:`★の場面あり（該当 ${hits.length}件）→ 判定：×（0点）`};
+  if(hits.length===1) return {cls:"part", text:"該当 1件 → 判定：△（1点）"};
+  return {cls:"bad", text:`該当 ${hits.length}件（2件以上）→ 判定：×（0点）`};
+}
+const RCLASS = { "○":"good","△":"part","×":"bad","－":"na" };
+const STORAGE_KEY = "roundcheck_records_v1";
+
+/* ============ 共有設定（GAS＋スプレッドシート） ============
+   複数端末で記録を共有する場合：
+   1. 事例検討で使っているスプレッドシートの Apps Script を開く
+   2. 同梱の「事例検討_GASコード.gs」を最新版に差し替えて保存
+   3. デプロイ →「デプロイを管理」→ 編集（鉛筆）→ バージョン「新バージョン」でデプロイ
+   4. 下の GAS_URL に、そのウェブアプリのURLを貼り付ける
+   ※ "" のままでも動作します（この端末のみのローカル保存になります） */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbw4ZwzlLaLdbSQz4r0tAn_Ea7GYh78OEzcePp0KFTzznrZhZy7y0gG8bIgYLRMchLB1/exec";
+const GAS_TYPE = "round";   /* スプレッドシート内の区分（事例検討と分けて保存されます） */
+
+let CLOUD=false;
+function setSync(t,ok){
+  const e=document.getElementById('sync-stat');
+  if(e){ e.textContent=t; e.style.background= ok?'rgba(255,255,255,0.28)':'rgba(255,255,255,0.12)'; }
+}
+async function initCloud(){
+  if(!GAS_URL){ setSync('ローカル保存',false); return; }
+  setSync('接続確認中…',false);
+  try{
+    const res=await fetch(GAS_URL+'?action=ping');
+    const j=await res.json();
+    if(j&&j.status==='ok'){ CLOUD=true; setSync('共有ON',true); await cloudSync(); }
+    else throw new Error('bad');
+  }catch(e){ CLOUD=false; setSync('共有エラー→ローカル',false); }
+}
+async function cloudSave(rec){
+  if(!CLOUD) return false;
+  try{
+    const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'save',type:GAS_TYPE,rec:rec})});
+    const j=await res.json(); return j&&j.status==='ok';
+  }catch(e){ return false; }
+}
+async function cloudDelete(id){
+  if(!CLOUD) return;
+  try{ await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'delete',type:GAS_TYPE,id:id})}); }catch(e){}
+}
+async function cloudSync(){
+  if(!CLOUD) return;
+  try{
+    const res=await fetch(GAS_URL+'?action=list&type='+GAS_TYPE);
+    const j=await res.json();
+    if(!Array.isArray(j.records)) return;
+    const ids=new Set(j.records.map(r=>String(r.id)));
+    const localOnly=records.filter(r=>!ids.has(String(r.id)));
+    records=j.records.concat(localOnly).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    persist();
+    try{ refreshFloorLists(); renderHistory(); }catch(e){}
+  }catch(e){}
+}
+
+let state = { ratings:{}, comments:{}, criteria:{}, sumGood:"", sumImprove:"", sumNext:"" };
+let records = [];
+let compareSelection = [];
+let pendingDeleteId = null;
+
+function loadRecords(){ try{ records = JSON.parse(localStorage.getItem(STORAGE_KEY))||[]; }catch(e){ records=[]; } }
+function persist(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(records)); }catch(e){ notice("保存エラー","ブラウザの保存容量が不足している可能性があります。"); } }
+
+function calcScore(rec){ let sum=0,n=0; ALL_ITEMS.forEach(it=>{ const r=rec.ratings[it.no]; if(r==="○"){sum+=100;n++;}else if(r==="△"){sum+=50;n++;}else if(r==="×"){sum+=0;n++;} }); return n?Math.round(sum/n):null; }
+function calcPoints(rec){
+  let pt=0, max=0;
+  ALL_ITEMS.forEach(it=>{ const r=rec.ratings[it.no];
+    if(r==="○"||r==="△"||r==="×"){ pt+=PT[r]; max+=2; } });
+  return {pt,max,rate: max?Math.round(pt/max*100):null};
+}
+function countRatings(rec){ const c={"○":0,"△":0,"×":0,"－":0}; ALL_ITEMS.forEach(it=>{ const r=rec.ratings[it.no]; if(r)c[r]++; }); return c; }
+
+function renderCheck(){
+  const main = document.getElementById('check-content'); main.innerHTML='';
+  DATA.categories.forEach(cat=>{
+    const catDiv=document.createElement('div'); catDiv.className='category';
+    const hdr=document.createElement('div'); hdr.className='category-header';
+    hdr.innerHTML=`<span class="cat-icon">${cat.icon}</span>${cat.name}<span class="cat-count" id="cat-count-${cat.id}"></span>`;
+    catDiv.appendChild(hdr);
+    cat.items.forEach(item=>{
+      const itemDiv=document.createElement('div'); itemDiv.className='check-item';
+      const mainRow=document.createElement('div'); mainRow.className='check-main';
+      const num=document.createElement('div'); num.className='check-num'; num.textContent=item.no;
+      const txt=document.createElement('div'); txt.className='check-text'; txt.textContent=item.title;
+      const rg=document.createElement('div'); rg.className='rating-group';
+      RATINGS.forEach(r=>{ const btn=document.createElement('button'); btn.className=`badge ${state.ratings[item.no]===r?RCLASS[r]:'inactive'}`; btn.textContent=r;
+        btn.title=(r==="－")?"その場面が発生しなかったとき（点数に入れない）":"下の基準にチェックすると自動で決まります";
+        btn.onclick=()=>{ if(r==="－"){ state.criteria[item.no]={none:false,hits:[]}; toggleRating(item.no,r); } else { notice("判定は自動で決まります","「▶ 判定の基準を開く」から、実際に観察された場面にチェックしてください。チェックした数で○△×が自動的に決まります。\n（その場面が発生しなかったときだけ「－」を選びます）"); } };
+        rg.appendChild(btn); });
+      mainRow.appendChild(num); mainRow.appendChild(txt); mainRow.appendChild(rg); itemDiv.appendChild(mainRow);
+      const ck0=state.criteria[item.no];
+      const hasInput = !!(ck0 && (ck0.none || (ck0.hits&&ck0.hits.length)));
+      const toggle=document.createElement('div'); toggle.className='criteria-toggle';
+      toggle.innerHTML=(hasInput?'▼ 判定の基準を開く（入力済み）':'▶ 判定の基準を開く');
+      toggle.onclick=()=>toggleCriteria(item.no,toggle); itemDiv.appendChild(toggle);
+      const box=document.createElement('div'); box.className='criteria-box'+(hasInput?' open':''); box.id=`criteria-${item.no}`;
+      const lead=document.createElement('div'); lead.className='crit-lead';
+      lead.textContent='実際に観察された場面にチェックしてください（★は1つでも×）';
+      box.appendChild(lead);
+      const crit=CRITICAL[item.no]||[];
+      const ck=state.criteria[item.no]||{none:false,hits:[]};
+      /* 気になる場面はなかった */
+      const nl=document.createElement('label'); nl.className='crit-opt none'+(ck.none?' on':'');
+      nl.innerHTML=`<input type="checkbox" ${ck.none?'checked':''}><span><b>気になる場面はなかった</b>（下のどれにも当てはまらない）→ ○（2点）</span>`;
+      nl.querySelector('input').onchange=(e)=>setCritNone(item.no,e.target.checked);
+      box.appendChild(nl);
+      /* 各サイン */
+      item.criteria.forEach((c,ci)=>{
+        const isC=crit.includes(ci);
+        const on=(ck.hits||[]).includes(ci);
+        const lb=document.createElement('label'); lb.className='crit-opt'+(on?' on':'');
+        lb.innerHTML=`<input type="checkbox" ${on?'checked':''}><span>${isC?'<span class="crit-star">★</span> ':''}${esc(c)}</span>`;
+        lb.querySelector('input').onchange=(e)=>setCritHit(item.no,ci,e.target.checked);
+        box.appendChild(lb);
+      });
+      const jg=judgeText(item.no);
+      const jd=document.createElement('div'); jd.className='crit-judge '+jg.cls; jd.textContent=jg.text;
+      box.appendChild(jd);
+      itemDiv.appendChild(box);
+      const cw=document.createElement('div'); cw.className='comment-wrap'; const ta=document.createElement('textarea'); ta.placeholder='気づき・コメント／改善メモを入力…'; ta.value=state.comments[item.no]||''; ta.oninput=()=>{ state.comments[item.no]=ta.value; }; cw.appendChild(ta); itemDiv.appendChild(cw);
+      if(state.ratings[item.no]) itemDiv.classList.add('evaluated');
+      catDiv.appendChild(itemDiv);
+    });
+    main.appendChild(catDiv);
+  });
+  const sumSec=document.createElement('div'); sumSec.className='summary-section';
+  sumSec.innerHTML=`<div class="summary-header">📝 総合所見</div><div class="summary-body">
+    <div class="summary-field"><label>✅ よかった点（具体例を必ず1つ以上書く）</label><textarea id="sum-good" placeholder="よかった具体的な実践例を記入してください…">${state.sumGood}</textarea></div>
+    <div class="summary-field"><label>⚠️ 特に改善が必要な点と対応策</label><textarea id="sum-improve" placeholder="改善が必要な点と具体的な対応策を記入してください…">${state.sumImprove}</textarea></div>
+    <div class="summary-field"><label>🔍 来月のラウンドで重点的に見る項目</label><textarea id="sum-next" placeholder="次回ラウンドで重点的に確認する項目を記入してください…">${state.sumNext}</textarea></div>
+  </div>`;
+  main.appendChild(sumSec);
+  const note=document.createElement('p'); note.style.cssText='font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:16px;line-height:1.7;'; note.textContent='※ラウンド後、申し送りまたはチーム会議でチーム全体と共有すること。よかった点を必ず伝えることで定着率が上がります。'; main.appendChild(note);
+  const ab=document.createElement('div'); ab.className='action-bar';
+  ab.innerHTML=`<button class="btn btn-secondary" onclick="openModal('reset-modal')">🔄 入力クリア</button><button class="btn btn-primary" onclick="showResult()">📊 結果を確認</button><button class="btn btn-primary" onclick="saveRecord()">💾 記録を保存</button><button class="btn btn-secondary" onclick="printPage()">🖨️ 印刷</button>`;
+  main.appendChild(ab);
+  updateProgress(); updateCatCounts();
+  const g=document.getElementById('sum-good'); if(g)g.oninput=()=>{state.sumGood=g.value;};
+  const im=document.getElementById('sum-improve'); if(im)im.oninput=()=>{state.sumImprove=im.value;};
+  const nx=document.getElementById('sum-next'); if(nx)nx.oninput=()=>{state.sumNext=nx.value;};
+}
+function toggleRating(no,r){ if(state.ratings[no]===r){ delete state.ratings[no]; } else { state.ratings[no]=r; } renderCheck(); }
+function ensureCrit(no){ if(!state.criteria[no]) state.criteria[no]={none:false,hits:[]}; return state.criteria[no]; }
+function setCritNone(no,on){
+  const ck=ensureCrit(no);
+  ck.none=on; if(on) ck.hits=[];
+  applyAuto(no);
+}
+function setCritHit(no,ci,on){
+  const ck=ensureCrit(no);
+  ck.hits=ck.hits||[];
+  if(on){ if(!ck.hits.includes(ci)) ck.hits.push(ci); ck.none=false; }
+  else { ck.hits=ck.hits.filter(x=>x!==ci); }
+  applyAuto(no);
+}
+function applyAuto(no){
+  const r=autoRate(no);
+  if(r) state.ratings[no]=r;
+  else if(state.ratings[no]!=="－") delete state.ratings[no];
+  renderCheck();
+}
+function toggleCriteria(no,tog){ const box=document.getElementById(`criteria-${no}`); box.classList.toggle('open'); tog.innerHTML=box.classList.contains('open')?'▼ 判断基準を閉じる':'▶ ×と判断する場面の例を見る'; }
+function updateProgress(){ const done=Object.keys(state.ratings).length; const pct=Math.round(done/TOTAL*100); document.getElementById('prog-fill').style.width=pct+'%'; document.getElementById('prog-label').textContent=`${done} / ${TOTAL} 項目評価済み（${pct}%）`; }
+function updateCatCounts(){ DATA.categories.forEach(cat=>{ const done=cat.items.filter(i=>state.ratings[i.no]).length; const el=document.getElementById(`cat-count-${cat.id}`); if(el)el.textContent=`${done}/${cat.items.length}`; }); }
+
+function showResult(){
+  const c=countRatings({ratings:state.ratings});
+  const mi=TOTAL-(c["○"]+c["△"]+c["×"]+c["－"]);
+  const score=calcScore({ratings:state.ratings});
+  document.getElementById('result-grid').innerHTML=`
+    <div class="result-card good"><div class="rc-num">${c["○"]}</div><div class="rc-label">○ できている</div></div>
+    <div class="result-card partial"><div class="rc-num">${c["△"]}</div><div class="rc-label">△ 一部できている</div></div>
+    <div class="result-card bad"><div class="rc-num">${c["×"]}</div><div class="rc-label">× できていない</div></div>
+    <div class="result-card na"><div class="rc-num">${c["－"]}</div><div class="rc-label">－ 該当なし</div></div>`;
+  const badItems=ALL_ITEMS.filter(i=>state.ratings[i.no]==="×");
+  const P=calcPoints({ratings:state.ratings});
+  let msg='';
+  if(P.max>0) msg+=`合計 ${P.pt}点 ／ ${P.max}点満点（達成率 ${P.rate}％）　※○2点・△1点・×0点、「－」は点数に入れません\n`;
+  if(mi>0) msg+=`⚠️ まだ ${mi} 項目が未評価です。\n`;
+  if(badItems.length>0) msg+=`改善が必要な項目：${badItems.map(i=>'No.'+i.no).join('、')}`;
+  else if(mi===0) msg+='✅ すべての項目を評価しました。お疲れ様でした！';
+  document.getElementById('result-msg').textContent=msg;
+  openModal('result-modal');
+}
+function saveRecord(){
+  const floor=document.getElementById('meta-floor').value.trim();
+  const date=document.getElementById('meta-date').value;
+  const staff=document.getElementById('meta-staff').value.trim();
+  const target=document.getElementById('meta-target').value.trim();
+  const targetType=document.getElementById('meta-targettype').value;
+  if(!floor){ notice("入力不足","フロア名を入力してください。"); return; }
+  if(!date){ notice("入力不足","実施日を入力してください。"); return; }
+  if(!targetType){ notice("入力不足","対象区分（①前頭側頭型認知症／②症状のある方）を選んでください。"); return; }
+  if(Object.keys(state.ratings).length===0){ notice("入力不足","1項目以上評価してください。"); return; }
+  const rec={ id:Date.now().toString(), floor, date, staff, target, targetType, ratings:Object.assign({},state.ratings), comments:Object.assign({},state.comments), criteria:JSON.parse(JSON.stringify(state.criteria||{})), sumGood:state.sumGood, sumImprove:state.sumImprove, sumNext:state.sumNext, savedAt:new Date().toISOString() };
+  records.push(rec); persist(); closeModal('result-modal');
+  if(CLOUD){
+    setSync('同期中…',true);
+    cloudSave(rec).then(ok=>{
+      setSync(ok?'共有ON':'共有エラー→ローカル',ok);
+      notice("保存しました", ok
+        ? `「${floor}」${date} の記録を保存し、共有データベースに同期しました。\n他の端末からも確認できます。`
+        : `「${floor}」${date} の記録をこの端末に保存しました。\n共有データベースへの同期に失敗しました。通信環境を確認してください。`);
+    });
+  }else{
+    notice("保存しました",`「${floor}」${date} の記録を保存しました。\n過去データ・比較タブで確認できます。`);
+  }
+  refreshFloorLists();
+}
+function doReset(){ state={ ratings:{}, comments:{}, criteria:{}, sumGood:"", sumImprove:"", sumNext:"" }; document.getElementById('meta-target').value=""; document.getElementById('meta-targettype').value=""; closeModal('reset-modal'); renderCheck(); }
+
+function renderHistory(){
+  const list=document.getElementById('history-list');
+  const ff=document.getElementById('hist-floor-filter').value;
+  const sort=document.getElementById('hist-sort').value;
+  let recs=records.slice();
+  if(ff) recs=recs.filter(r=>r.floor===ff);
+  recs.sort((a,b)=>sort==='date-asc'?(a.date.localeCompare(b.date)||a.savedAt.localeCompare(b.savedAt)):(b.date.localeCompare(a.date)||b.savedAt.localeCompare(a.savedAt)));
+  if(recs.length===0){ list.innerHTML=`<div class="empty-state"><div class="es-icon">📭</div>保存された記録がありません。<br>チェック入力タブで評価して「記録を保存」してください。</div>`; return; }
+  list.innerHTML='';
+  recs.forEach(rec=>{
+    const c=countRatings(rec); const score=calcScore(rec);
+    const card=document.createElement('div'); card.className='history-card';
+    card.innerHTML=`<div class="history-card-head" onclick="toggleHistoryDetail('${rec.id}')">
+      <span class="hc-floor">🏢 ${esc(rec.floor)}</span><span class="hc-date">📅 ${esc(rec.date)}</span>
+      ${rec.staff?`<span class="hc-staff">👤 ${esc(rec.staff)}</span>`:''}
+      ${rec.targetType?`<span class="hc-staff">${esc(rec.targetType.split("（")[0])}</span>`:''}
+      ${rec.target?`<span class="hc-staff">🧑‍🦳 ${esc(rec.target)}</span>`:''}
+      <span class="hc-mini-stats">${score!==null?`<span class="mini-stat" style="color:var(--accent)">${score}点</span>`:''}<span class="mini-stat good">○${c["○"]}</span><span class="mini-stat part">△${c["△"]}</span><span class="mini-stat bad">×${c["×"]}</span></span></div>
+      <div class="history-detail" id="detail-${rec.id}">
+        ${ALL_ITEMS.map(it=>{ const r=rec.ratings[it.no]; if(!r)return''; const cm=rec.comments[it.no]; return `<div class="hd-item"><span class="hd-rating ${RCLASS[r]}">${r}</span><span>No.${it.no} ${esc(it.title)}${cm?`<span class="hd-comment">💬 ${esc(cm)}</span>`:''}</span></div>`; }).join('')}
+        <div class="hd-summary">${rec.sumGood?`<div><strong>✅ よかった点：</strong>${esc(rec.sumGood)}</div>`:''}${rec.sumImprove?`<div><strong>⚠️ 改善点：</strong>${esc(rec.sumImprove)}</div>`:''}${rec.sumNext?`<div><strong>🔍 来月の重点：</strong>${esc(rec.sumNext)}</div>`:''}</div>
+        <div class="hc-actions"><button class="btn btn-secondary btn-sm" onclick="printOne('${rec.id}')">🖨️ この記録を印刷</button><button class="btn btn-secondary btn-sm" onclick="loadToEdit('${rec.id}')">✏️ 読み込んで編集</button><button class="btn btn-secondary btn-sm" onclick="exportOne('${rec.id}')">📤 この記録を書出</button><button class="btn btn-danger btn-sm" onclick="askDelete('${rec.id}')">🗑️ 削除</button></div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+function toggleHistoryDetail(id){ document.getElementById('detail-'+id).classList.toggle('open'); }
+function loadToEdit(id){
+  const rec=records.find(r=>r.id===id); if(!rec)return;
+  state={ ratings:Object.assign({},rec.ratings), comments:Object.assign({},rec.comments), criteria:JSON.parse(JSON.stringify(rec.criteria||{})), sumGood:rec.sumGood||"", sumImprove:rec.sumImprove||"", sumNext:rec.sumNext||"" };
+  document.getElementById('meta-floor').value=rec.floor; document.getElementById('meta-date').value=rec.date; document.getElementById('meta-staff').value=rec.staff||""; document.getElementById('meta-target').value=rec.target||""; document.getElementById('meta-targettype').value=rec.targetType||"";
+  switchTab('check'); renderCheck();
+  notice("読み込みました","この記録を編集できます。\n「記録を保存」すると新しい記録として追加保存されます（元の記録は残ります）。");
+}
+function askDelete(id){ pendingDeleteId=id; const rec=records.find(r=>r.id===id); document.getElementById('delete-msg').textContent=`「${rec.floor}」${rec.date} の記録を削除します。元に戻せません。よろしいですか？`; openModal('delete-modal'); }
+function confirmDelete(){ const delId=pendingDeleteId; records=records.filter(r=>r.id!==delId); persist(); if(CLOUD) cloudDelete(delId); closeModal('delete-modal'); renderHistory(); refreshFloorLists(); }
+
+function renderComparePick(){
+  const wrap=document.getElementById('compare-pick-list');
+  if(records.length===0){ wrap.innerHTML=`<div class="empty-state" style="padding:24px"><div class="es-icon">📭</div>比較できる記録がありません。</div>`; document.getElementById('compare-result').innerHTML=''; return; }
+  const sorted=records.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  wrap.innerHTML='';
+  sorted.forEach(rec=>{
+    const sel=compareSelection.includes(rec.id);
+    const div=document.createElement('div'); div.className='pick-item'+(sel?' selected':''); div.onclick=()=>toggleCompare(rec.id);
+    div.innerHTML=`<input type="checkbox" ${sel?'checked':''} onclick="event.stopPropagation();toggleCompare('${rec.id}')"><span class="pick-label"><span class="pl-floor">${esc(rec.floor)}</span><span class="pl-date">${esc(rec.date)}${rec.staff?' / '+esc(rec.staff):''}${rec.target?' / 🧑‍🦳'+esc(rec.target):''}</span></span>`;
+    wrap.appendChild(div);
+  });
+}
+function toggleCompare(id){ if(compareSelection.includes(id))compareSelection=compareSelection.filter(x=>x!==id); else compareSelection.push(id); renderComparePick(); renderCompareResult(); }
+function renderCompareResult(){
+  const out=document.getElementById('compare-result');
+  if(compareSelection.length<2){ out.innerHTML=`<div class="empty-state" style="padding:30px"><div class="es-icon">👆</div>2件以上選ぶと比較表が表示されます。</div>`; return; }
+  const recs=compareSelection.map(id=>records.find(r=>r.id===id)).filter(Boolean).sort((a,b)=>a.date.localeCompare(b.date));
+  let html='<div class="compare-table-wrap"><table class="compare"><thead><tr><th class="item-col">確認項目</th>';
+  recs.forEach(r=>{ html+=`<th>${esc(r.floor)}<br><span style="font-weight:400;font-size:10px;opacity:0.85">${esc(r.date)}</span>${r.target?`<br><span style="font-weight:400;font-size:9px;opacity:0.75">🧑‍🦳${esc(r.target)}</span>`:''}</th>`; });
+  html+='</tr></thead><tbody>';
+  html+='<tr class="score-row"><td class="item-col">達成スコア</td>';
+  recs.forEach(r=>{ const s=calcScore(r); html+=`<td>${s!==null?s+'点':'－'}</td>`; });
+  html+='</tr>';
+  DATA.categories.forEach(cat=>{ cat.items.forEach(it=>{ html+=`<tr><td class="item-col">No.${it.no} ${esc(it.title)}</td>`; recs.forEach(r=>{ const rt=r.ratings[it.no]; const cls=rt?'cell-'+RCLASS[rt]:''; html+=`<td class="${cls}">${rt||'–'}</td>`; }); html+='</tr>'; }); });
+  html+='</tbody></table></div>';
+  if(recs.length===2){ const s0=calcScore(recs[0]),s1=calcScore(recs[1]); if(s0!==null&&s1!==null){ const diff=s1-s0; const arrow=diff>0?'📈 改善':diff<0?'📉 低下':'➡️ 変化なし'; html+=`<p class="trend-note">${esc(recs[0].date)}（${s0}点）→ ${esc(recs[1].date)}（${s1}点）：${arrow} ${diff!==0?(diff>0?'+':'')+diff+'点':''}</p>`; } }
+  html+=`<p class="trend-note">※ ○=100点／△=50点／×=0点で算出した達成スコアです（－は除外）。セルの色：緑=○、橙=△、赤=×、灰=該当なし、–=未評価。</p>`;
+  out.innerHTML=html;
+}
+
+function download(filename,text){ const blob=new Blob([text],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
+function exportAll(){ if(records.length===0){ notice("データなし","書き出す記録がありません。"); return; } download(`ラウンド記録_全${records.length}件_${todayStr()}.json`, JSON.stringify({type:"roundcheck",records},null,2)); }
+function exportOne(id){ const rec=records.find(r=>r.id===id); if(!rec)return; download(`ラウンド記録_${rec.floor}_${rec.date}.json`, JSON.stringify({type:"roundcheck",records:[rec]},null,2)); }
+function importData(event){
+  const file=event.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{ try{ const data=JSON.parse(e.target.result); const incoming=data.records||(Array.isArray(data)?data:null); if(!incoming){ notice("読込エラー","対応していないファイル形式です。"); return; } let added=0; incoming.forEach(rec=>{ if(!rec.id)rec.id=Date.now().toString()+Math.random().toString(36).slice(2,6); if(!records.some(r=>r.id===rec.id)){ records.push(rec); added++; } }); persist(); refreshFloorLists(); renderHistory(); notice("読み込み完了",`${added}件の記録を追加しました。（重複分は除外）`); }catch(err){ notice("読込エラー","ファイルを読み込めませんでした。"); } };
+  reader.readAsText(file); event.target.value='';
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function todayStr(){ const d=new Date(); return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`; }
+function refreshFloorLists(){
+  var FLOORS=["本館2階","本館3階","本館4階","新館2階","新館3階","デイケア","ヘルパー","居宅介護"];
+  const sel=document.getElementById('hist-floor-filter'); const cur=sel.value;
+  sel.innerHTML='<option value="">すべて</option>'+FLOORS.map(function(f){return '<option value="'+esc(f)+'">'+esc(f)+'</option>';}).join(''); sel.value=cur;
+}
+function notice(title,msg){ document.getElementById('notice-title').textContent=title; document.getElementById('notice-msg').textContent=msg; openModal('notice-modal'); }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function printPage(){ window.print(); }
+
+function printOne(id){
+  const rec=records.find(function(r){return r.id===id;});
+  if(!rec)return;
+  const c=countRatings(rec); const score=calcScore(rec);
+  var rowsHtml='';
+  DATA.categories.forEach(function(cat){
+    rowsHtml+='<tr><td colspan="3" style="background:#eef3f1;font-weight:bold;">'+esc(cat.name)+'</td></tr>';
+    cat.items.forEach(function(it){
+      var r=rec.ratings[it.no]||'';
+      var cls=r?('p-rt-'+RCLASS[r]):'';
+      var cm=rec.comments[it.no]?esc(rec.comments[it.no]):'';
+      rowsHtml+='<tr><td class="rt '+cls+'">'+(r||'－')+'</td><td>No.'+it.no+' '+esc(it.title)+'</td><td>'+cm+'</td></tr>';
+    });
+  });
+  var html=''+
+    '<div class="psheet">'+
+    '<div class="p-h1">認知症ケア フロアラウンド 記録</div>'+
+    '<div class="p-sub">介護老人保健施設 おおやけの里</div>'+
+    '<table class="p-meta"><tr>'+
+      '<td class="lbl">フロア</td><td>'+esc(rec.floor)+'</td>'+
+      '<td class="lbl">実施日</td><td>'+esc(rec.date)+'</td></tr>'+
+    '<tr><td class="lbl">実施者</td><td>'+esc(rec.staff||'')+'</td>'+
+      '<td class="lbl">達成スコア</td><td>'+(score!==null?score+' 点（○100/△50/×0）':'－')+'</td></tr>'+
+    '<tr><td class="lbl">対象区分</td><td colspan="3">'+esc(rec.targetType||'')+'</td></tr>'+
+    '<tr><td class="lbl">対象利用者</td><td colspan="3">'+esc(rec.target||'')+'</td></tr>'+
+    '<tr><td class="lbl">評価集計</td><td colspan="3">○ '+c['○']+' ／ △ '+c['△']+' ／ × '+c['×']+' ／ － '+c['－']+'</td></tr>'+
+    '</table>'+
+    '<div class="p-sec">評価項目</div>'+
+    '<table class="p-tbl"><tr><th style="width:34px;">評価</th><th>確認項目</th><th style="width:38%;">気づき・コメント</th></tr>'+rowsHtml+'</table>'+
+    '<div class="p-sec">総合所見</div>'+
+    '<p class="p-note"><b>よかった点：</b>'+esc(rec.sumGood||'')+'</p>'+
+    '<p class="p-note"><b>改善が必要な点：</b>'+esc(rec.sumImprove||'')+'</p>'+
+    '<p class="p-note"><b>来月の重点：</b>'+esc(rec.sumNext||'')+'</p>'+
+    '<div class="p-foot">印刷日：'+new Date().toLocaleDateString('ja-JP')+'</div>'+
+    '</div>';
+  doPrint(html);
+}
+
+function printList(){
+  const ff=document.getElementById('hist-floor-filter').value;
+  const sort=document.getElementById('hist-sort').value;
+  var recs=records.slice();
+  if(ff) recs=recs.filter(function(r){return r.floor===ff;});
+  recs.sort(function(a,b){return sort==='date-asc'?a.date.localeCompare(b.date):b.date.localeCompare(a.date);});
+  if(recs.length===0){ notice("データなし","印刷できる記録がありません。"); return; }
+  var rows='';
+  recs.forEach(function(rec){
+    var c=countRatings(rec); var score=calcScore(rec);
+    rows+='<tr><td class="floor">'+esc(rec.floor)+'</td><td>'+esc(rec.date)+'</td><td>'+esc(rec.staff||'')+'</td><td>'+esc((rec.targetType||'').slice(0,2))+' '+esc(rec.target||'')+'</td>'+
+      '<td>'+(score!==null?score:'－')+'</td><td>'+c['○']+'</td><td>'+c['△']+'</td><td>'+c['×']+'</td><td>'+c['－']+'</td></tr>';
+  });
+  var title=ff?('フロア：'+esc(ff)):'全フロア';
+  var html=''+
+    '<div class="psheet">'+
+    '<div class="p-h1">認知症ケア フロアラウンド 記録一覧</div>'+
+    '<div class="p-sub">介護老人保健施設 おおやけの里　／　'+title+'　／　全 '+recs.length+' 件</div>'+
+    '<table class="p-list-tbl"><tr><th>フロア</th><th>実施日</th><th>実施者</th><th>対象利用者</th><th>スコア</th><th>○</th><th>△</th><th>×</th><th>－</th></tr>'+rows+'</table>'+
+    '<div class="p-foot">印刷日：'+new Date().toLocaleDateString('ja-JP')+'　／　スコアは ○100・△50・×0 で算出</div>'+
+    '</div>';
+  doPrint(html);
+}
+
+function doPrint(html){
+  var area=document.getElementById('print-area');
+  area.innerHTML=html;
+  document.body.classList.add('printing');
+  window.print();
+  setTimeout(function(){ document.body.classList.remove('printing'); area.innerHTML=''; }, 500);
+}
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  if(tab==='history')renderHistory();
+  if(tab==='compare'){ renderComparePick(); renderCompareResult(); }
+  window.scrollTo(0,0);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  try{ var d=new Date(); document.getElementById('meta-date').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }catch(e){}
+  try{ loadRecords(); }catch(e){ records=[]; }
+  try{ refreshFloorLists(); }catch(e){}
+  try{ renderCheck(); }catch(e){ var cc=document.getElementById('check-content'); if(cc) cc.innerHTML='<p style="padding:20px;color:#b83232;">画面の読み込みでエラーが発生しました。ページを再読み込みしてください。</p>'; }
+  try{ initCloud(); }catch(e){}
+});
+</script>
+</body>
+</html>
